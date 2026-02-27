@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Assign / Update Manager</title>
+</head>
+<body>
+
+<h2>Assign / Update Manager</h2>
+
+<p>
+    Employee:
+    <b th:text="${employee.firstName} + ' ' + ${employee.lastName}"></b>
+</p>
+
+<form th:action="@{/admin/manager/update}" method="post">
+
+    <input type="hidden" name="empId" th:value="${employee.empId}" />
+
+    <label>Select Manager:</label>
+    <select name="managerId" required>
+        <option th:each="mgr : ${managers}"
+                th:value="${mgr.empId}"
+                th:text="${mgr.firstName} + ' ' + ${mgr.lastName}">
+        </option>
+    </select>
+
+    <br><br>
+    <button type="submit">Save</button>
+</form>
+
+</body>
+</html>
