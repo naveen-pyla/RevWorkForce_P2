@@ -14,21 +14,56 @@ import java.time.LocalDateTime;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initAdmin(UserRepository userRepository,
-                                EmployeeRepository employeeRepository,
-                                DepartmentRepository departmentRepository,
-                                PasswordEncoder passwordEncoder) {
+    CommandLineRunner initData(UserRepository userRepository,
+                               EmployeeRepository employeeRepository,
+                               DepartmentRepository departmentRepository,
+                               LeaveTypeRepository leaveTypeRepository,
+                               PasswordEncoder passwordEncoder) {
+
         return args -> {
 
-            if (userRepository.findByEmail("admin@rev.com").isEmpty()) {
+            /*
+             * ---------------------------------------------------
+             * 1️⃣ Ensure Default Department Exists
+             * ---------------------------------------------------
+             */
+            Department adminDept = departmentRepository
+                    .findByDepartmentName("Administration")
+                    .orElseGet(() -> departmentRepository.save(
+                            Department.builder()
+                                    .departmentName("Administration")
+                                    .build()
+                    ));
 
-                Department department = departmentRepository
-                        .findByDepartmentName("Administration")
-                        .orElseGet(() -> departmentRepository.save(
-                                Department.builder()
-                                        .departmentName("Administration")
-                                        .build()
-                        ));
+            /*
+             * ---------------------------------------------------
+             * 2️⃣ Ensure Leave Types Exist
+             * ---------------------------------------------------
+             */
+            if (leaveTypeRepository.count() == 0) {
+
+                LeaveType casual = LeaveType.builder()
+                        .leaveName("Casual Leave")
+                        .maxPerYear(10)
+                        .build();
+
+                LeaveType sick = LeaveType.builder()
+                        .leaveName("Sick Leave")
+                        .maxPerYear(8)
+                        .build();
+
+                leaveTypeRepository.save(casual);
+                leaveTypeRepository.save(sick);
+
+                System.out.println("✅ Default Leave Types initialized");
+            }
+
+            /*
+             * ---------------------------------------------------
+             * 3️⃣ Ensure Default ADMIN Exists
+             * ---------------------------------------------------
+             */
+            if (userRepository.findByEmail("admin@rev.com").isEmpty()) {
 
                 User adminUser = userRepository.save(
                         User.builder()
@@ -45,7 +80,7 @@ public class DataInitializer {
                                 .user(adminUser)
                                 .firstName("System")
                                 .lastName("Admin")
-                                .department(department)
+                                .department(adminDept)
                                 .designation("Administrator")
                                 .joiningDate(LocalDate.now())
                                 .salary(0.0)
