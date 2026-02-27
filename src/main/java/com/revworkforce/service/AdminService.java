@@ -17,6 +17,10 @@ public class AdminService {
     private final DepartmentRepository departmentRepository;
     private final LeaveTypeRepository leaveTypeRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
+    private final LeaveApplicationRepository leaveApplicationRepository;
+    private final GoalRepository goalRepository;
+    private final PerformanceReviewRepository performanceReviewRepository;
+    private final NotificationRepository notificationRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -76,5 +80,24 @@ public class AdminService {
                 leaveBalanceRepository.save(lb);
             });
         }
+    }
+
+    @Transactional
+    public void deleteEmployee(Long empId) {
+
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // 1️⃣ Delete related data
+        leaveBalanceRepository.deleteByEmployee(employee);
+        leaveApplicationRepository.deleteByEmployee(employee);
+        goalRepository.deleteByEmployee(employee);
+        performanceReviewRepository.deleteByEmployee(employee);
+        notificationRepository.deleteByUser(employee.getUser());
+        // 2️⃣ Delete employee
+        employeeRepository.delete(employee);
+
+        // 3️⃣ Delete user
+        userRepository.delete(employee.getUser());
     }
 }
