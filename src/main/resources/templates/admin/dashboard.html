@@ -4,7 +4,21 @@
     <title>Admin Dashboard</title>
 </head>
 <body>
-<h2>Welcome Admin</h2>
+<h2>Welcome, Admin</h2>
+
+<div class="mt-4">
+
+    <a class="btn btn-primary mb-2"
+       th:href="@{/admin/create-employee}">
+        Create Employee
+    </a>
+
+    <a class="btn btn-secondary mb-2"
+       th:href="@{/admin/employees}">
+        View Employees
+    </a>
+
+</div>
 <form th:action="@{/logout}" method="post" style="display:inline;">
     <button type="submit" class="btn btn-danger">Logout</button>
 </form></body>

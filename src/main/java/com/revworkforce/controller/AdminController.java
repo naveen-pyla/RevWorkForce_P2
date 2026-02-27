@@ -34,4 +34,16 @@ public class AdminController {
         adminService.createEmployee(request);
         return "redirect:/admin/dashboard";
     }
+
+    @GetMapping("/employees")
+    public String listEmployees(Model model) {
+
+        model.addAttribute("employees", employeeRepository.findAll());
+        employeeRepository.findAll().forEach(e ->
+                System.out.println(e.getEmpId() + " -> " +
+                        (e.getDepartment() != null ? e.getDepartment().getDepartmentName() : "NULL")));
+        return "admin/employee-list";
+    }
+
+
 }

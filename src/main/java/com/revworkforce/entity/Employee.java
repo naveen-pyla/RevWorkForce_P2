@@ -31,8 +31,8 @@ public class Employee {
     private LocalDate dob;
     private LocalDate joiningDate;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "DEPARTMENT_ID")
     private Department department;
 
     private String designation; // Keeping varchar as decided
