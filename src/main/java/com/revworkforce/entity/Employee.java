@@ -44,4 +44,5 @@ public class Employee {
     private Double salary;
 
     private String status; // ACTIVE / INACTIVE
+
 }

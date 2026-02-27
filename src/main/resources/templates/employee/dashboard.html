@@ -5,6 +5,10 @@
 </head>
 <body>
 <h2>Welcome Employee</h2>
+
+<a th:href="@{/employee/announcements}">
+    View Announcements
+</a>
 <form th:action="@{/logout}" method="post" style="display:inline;">
     <button type="submit" class="btn btn-danger">Logout</button>
 </form></body>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Announcements</title>
+</head>
+<body>
+
+<h2>Announcements</h2>
+
+<a th:href="@{/admin/announcements/create}">
+    Create New Announcement
+</a>
+
+<br><br>
+
+<table border="1">
+    <tr>
+        <th>Title</th>
+        <th>Message</th>
+        <th>Created By</th>
+        <th>Created At</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="a : ${announcements}">
+        <td th:text="${a.title}"></td>
+        <td th:text="${a.message}"></td>
+        <td th:text="${a.createdBy.firstName} + ' ' + ${a.createdBy.lastName}"></td>
+        <td th:text="${a.createdAt}"></td>
+        <td>
+            <a th:href="@{/admin/announcements/delete/{id}(id=${a.announcementId})}">
+                Delete
+            </a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

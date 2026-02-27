@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Announcements</title>
+</head>
+<body>
+
+<h2>Company Announcements</h2>
+
+<table border="1">
+    <tr>
+        <th>Title</th>
+        <th>Message</th>
+        <th>Created At</th>
+    </tr>
+
+    <tr th:each="a : ${announcements}">
+        <td th:text="${a.title}"></td>
+        <td th:text="${a.message}"></td>
+        <td th:text="${a.createdAt}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

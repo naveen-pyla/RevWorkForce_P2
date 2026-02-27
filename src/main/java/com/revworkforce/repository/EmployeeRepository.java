@@ -1,6 +1,7 @@
 package com.revworkforce.repository;
 
 import com.revworkforce.entity.Employee;
+import com.revworkforce.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,4 +15,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findAllManagers();
 
     @Query("SELECT e FROM Employee e WHERE e.user.role = 'ADMIN'")
-    List<Employee> findAllAdmins();}
+    List<Employee> findAllAdmins();
+
+    Employee findByUser(User user);
+}
