@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -127,5 +129,82 @@ public class AdminService {
         announcement.setCreatedAt(java.time.LocalDateTime.now());
 
         announcementRepository.save(announcement);
+    }
+
+    public List<LeaveApplication> getAllPendingLeaves() {
+        return leaveApplicationRepository.findAll().stream()
+                .filter(leave -> "PENDING".equals(leave.getStatus()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Transactional
+    public void approveLeaveAdmin(Long leaveId, String adminEmail) {
+        LeaveApplication leave = leaveApplicationRepository.findById(leaveId)
+                .orElseThrow(() -> new RuntimeException("Leave application not found"));
+
+        if (!"PENDING".equals(leave.getStatus())) {
+            throw new RuntimeException("Leave is not in PENDING state");
+        }
+
+        User user = userRepository.findByEmail(adminEmail)
+                .orElseThrow(() -> new RuntimeException("Admin user not found"));
+        Employee admin = employeeRepository.findByUser(user);
+
+        long leaveDays = java.time.temporal.ChronoUnit.DAYS.between(leave.getStartDate(), leave.getEndDate()) + 1;
+        if (leaveDays <= 0) {
+            throw new RuntimeException("End date must be after or same as start date");
+        }
+
+        LeaveBalance balance = leaveBalanceRepository
+                .findByEmployeeAndLeaveType(leave.getEmployee(), leave.getLeaveType())
+                .orElseThrow(() -> new RuntimeException("Leave balance record not found"));
+
+        if (balance.getBalanceDays() < leaveDays) {
+            throw new RuntimeException("Insufficient leave balance");
+        }
+
+        balance.setBalanceDays((int) (balance.getBalanceDays() - leaveDays));
+        leaveBalanceRepository.save(balance);
+
+        leave.setStatus("APPROVED");
+        leave.setApprovedBy(admin);
+        leaveApplicationRepository.save(leave);
+
+        Notification notification = Notification.builder()
+                .user(leave.getEmployee().getUser())
+                .message("Your leave request for " + leave.getLeaveType().getLeaveName()
+                        + " has been approved by the Admin.")
+                .isRead(false)
+                .createdAt(java.time.LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
+    }
+
+    @Transactional
+    public void rejectLeaveAdmin(Long leaveId, String adminComment, String adminEmail) {
+        LeaveApplication leave = leaveApplicationRepository.findById(leaveId)
+                .orElseThrow(() -> new RuntimeException("Leave application not found"));
+
+        if (!"PENDING".equals(leave.getStatus())) {
+            throw new RuntimeException("Leave is not in PENDING state");
+        }
+
+        User user = userRepository.findByEmail(adminEmail)
+                .orElseThrow(() -> new RuntimeException("Admin user not found"));
+        Employee admin = employeeRepository.findByUser(user);
+
+        leave.setStatus("REJECTED");
+        leave.setApprovedBy(admin);
+        leave.setManagerComment(adminComment);
+        leaveApplicationRepository.save(leave);
+
+        Notification notification = Notification.builder()
+                .user(leave.getEmployee().getUser())
+                .message("Your leave request for " + leave.getLeaveType().getLeaveName()
+                        + " has been rejected by the Admin. Comment: " + adminComment)
+                .isRead(false)
+                .createdAt(java.time.LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
     }
 }

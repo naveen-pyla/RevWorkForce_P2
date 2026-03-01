@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Create Announcement</title>
 </head>
+
 <body>
 
-<h2>Create Announcement</h2>
+    <h2>Create Announcement</h2>
 
-<form th:action="@{/admin/announcements/save}"
-      th:object="${announcement}"
-      method="post">
+    <form th:action="@{/admin/announcements/save}" th:object="${announcement}" method="post">
 
-    <label>Title:</label>
-    <input type="text" th:field="*{title}" required />
+        <label>Title:</label>
+        <input type="text" th:field="*{title}" required />
 
+        <br><br>
+
+        <label>Message:</label>
+        <textarea th:field="*{message}" required></textarea>
+
+        <br><br>
+
+        <button type="submit">Save</button>
+    </form>
     <br><br>
-
-    <label>Message:</label>
-    <textarea th:field="*{message}" required></textarea>
-
-    <br><br>
-
-    <button type="submit">Save</button>
-</form>
-
+    <a th:href="@{/admin/announcements}">Back to Announcements</a>
 </body>
+
 </html>

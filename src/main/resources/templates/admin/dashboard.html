@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Dashboard</title>
 </head>
+
 <body>
-<h2>Welcome, Admin</h2>
+    <h2>Welcome, Admin</h2>
 
-<div class="mt-4">
+    <div class="mt-4">
 
-    <a class="btn btn-primary mb-2"
-       th:href="@{/admin/create-employee}">
-        Create Employee
-    </a>
+        <a class="btn btn-primary mb-2" th:href="@{/admin/create-employee}">
+            Create Employee
+        </a>
 
-    <a class="btn btn-secondary mb-2"
-       th:href="@{/admin/employees}">
-        View Employees
-    </a>
+        <a class="btn btn-secondary mb-2" th:href="@{/admin/employees}">
+            View Employees
+        </a>
 
-    <a th:href="@{/admin/announcements}">
-        Manage Announcements
-    </a>
+        <a th:href="@{/admin/announcements}">
+            Manage Announcements
+        </a>
 
-</div>
-<form th:action="@{/logout}" method="post" style="display:inline;">
-    <button type="submit" class="btn btn-danger">Logout</button>
-</form></body>
+        <a th:href="@{/admin/leave-requests}" class="btn btn-warning mb-2">
+            Manage Leave Requests
+        </a>
+
+    </div>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+</body>
+
 </html>

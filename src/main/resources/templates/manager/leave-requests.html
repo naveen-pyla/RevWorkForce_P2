@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Leave Requests</title>
+</head>
+
+<body>
+    <h1>Pending Leave Requests</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="leave : ${leaves}">
+                <td th:text="${leave.employee.firstName + ' ' + leave.employee.lastName}"></td>
+                <td th:text="${leave.leaveType.leaveName}"></td>
+                <td th:text="${leave.startDate}"></td>
+                <td th:text="${leave.endDate}"></td>
+                <td th:text="${leave.status}"></td>
+                <td>
+                    <form th:action="@{/manager/leave/approve}" method="post" style="display:inline;">
+                        <input type="hidden" name="leaveId" th:value="${leave.leaveId}" />
+                        <button type="submit">Approve</button>
+                    </form>
+                    <form th:action="@{/manager/leave/reject}" method="post" style="display:inline;">
+                        <input type="hidden" name="leaveId" th:value="${leave.leaveId}" />
+                        <input type="text" name="managerComment" placeholder="Reason for rejection" required />
+                        <button type="submit">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(leaves)}">
+                <td colspan="6" style="text-align: center;">No pending leave requests</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

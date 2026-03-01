@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Manager Dashboard</title>
 </head>
+
 <body>
-<h2>Welcome Manager</h2>
-<a th:href="@{/manager/announcements}">
-    View Announcements
-</a>
-<form th:action="@{/logout}" method="post" style="display:inline;">
-    <button type="submit" class="btn btn-danger">Logout</button>
-</form></body>
+    <h2>Welcome Manager</h2>
+    <a th:href="@{/manager/announcements}">
+        View Announcements
+    </a>
+    <br />
+    <a th:href="@{/manager/leave-requests}">
+        Manage Leave Requests
+    </a>
+    <br />
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+</body>
+
 </html>

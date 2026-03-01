@@ -126,4 +126,32 @@ public class AdminController {
         return "redirect:/admin/announcements";
     }
 
+    @GetMapping("/leave-requests")
+    public String viewAllLeaveRequests(Model model) {
+        model.addAttribute("leaves", adminService.getAllPendingLeaves());
+        return "admin/leave-requests";
+    }
+
+    @PostMapping("/leave/approve")
+    public String approveLeave(@RequestParam Long leaveId, Authentication authentication) {
+        try {
+            adminService.approveLeaveAdmin(leaveId, authentication.getName());
+        } catch (RuntimeException e) {
+            // Error handling
+        }
+        return "redirect:/admin/leave-requests";
+    }
+
+    @PostMapping("/leave/reject")
+    public String rejectLeave(@RequestParam Long leaveId,
+            @RequestParam(required = false) String managerComment,
+            Authentication authentication) {
+        try {
+            adminService.rejectLeaveAdmin(leaveId, managerComment, authentication.getName());
+        } catch (RuntimeException e) {
+            // Error handling
+        }
+        return "redirect:/admin/leave-requests";
+    }
+
 }

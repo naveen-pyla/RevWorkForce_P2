@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Assign / Update Manager</title>
 </head>
+
 <body>
 
-<h2>Assign / Update Manager</h2>
+    <h2>Assign / Update Manager</h2>
 
-<p>
-    Employee:
-    <b th:text="${employee.firstName} + ' ' + ${employee.lastName}"></b>
-</p>
+    <p>
+        Employee:
+        <b th:text="${employee.firstName} + ' ' + ${employee.lastName}"></b>
+    </p>
 
-<form th:action="@{/admin/manager/update}" method="post">
+    <form th:action="@{/admin/manager/update}" method="post">
 
-    <input type="hidden" name="empId" th:value="${employee.empId}" />
+        <input type="hidden" name="empId" th:value="${employee.empId}" />
 
-    <label>Select Manager:</label>
-    <select name="managerId" required>
-        <option th:each="mgr : ${managers}"
-                th:value="${mgr.empId}"
+        <label>Select Manager:</label>
+        <select name="managerId" required>
+            <option th:each="mgr : ${managers}" th:value="${mgr.empId}"
                 th:text="${mgr.firstName} + ' ' + ${mgr.lastName}">
-        </option>
-    </select>
+            </option>
+        </select>
 
+        <br><br>
+        <button type="submit">Save</button>
+    </form>
     <br><br>
-    <button type="submit">Save</button>
-</form>
-
+    <a th:href="@{/admin/employees}">Back to Employee List</a>
 </body>
+
 </html>

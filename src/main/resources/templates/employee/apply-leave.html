@@ -1,24 +1,20 @@
-<form th:action="@{/employee/apply-leave}"
-      th:object="${leaveApplication}"
-      method="post">
+<form th:action="@{/employee/apply-leave}" th:object="${leaveApplication}" method="post">
 
     <label>Leave Type:</label>
     <select th:field="*{leaveType}">
-        <option th:each="type : ${leaveTypes}"
-                th:value="${type.leaveTypeId}"
-                th:text="${type.leaveName}">
+        <option th:each="type : ${leaveTypes}" th:value="${type.leaveTypeId}" th:text="${type.leaveName}">
         </option>
     </select>
 
     <br><br>
 
     <label>Start Date:</label>
-    <input type="date" th:field="*{startDate}" required/>
+    <input type="date" th:field="*{startDate}" required />
 
     <br><br>
 
     <label>End Date:</label>
-    <input type="date" th:field="*{endDate}" required/>
+    <input type="date" th:field="*{endDate}" required />
 
     <br><br>
 
@@ -29,3 +25,6 @@
 
     <button type="submit">Apply</button>
 </form>
+
+<br><br>
+<a th:href="@{/employee/dashboard}">Back to Dashboard</a>

@@ -1,17 +1,22 @@
 package com.revworkforce.controller;
 
 import com.revworkforce.repository.AnnouncementRepository;
+import com.revworkforce.service.ManagerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/manager")
 @RequiredArgsConstructor
 public class ManagerController {
     private final AnnouncementRepository announcementRepository;
+    private final ManagerService managerService;
 
     @GetMapping("/announcements")
     public String viewEmployeeAnnouncements(Model model) {
@@ -20,5 +25,36 @@ public class ManagerController {
                 announcementRepository.findAll());
 
         return "manager/announcements";
+    }
+
+    @GetMapping("/leave-requests")
+    public String viewLeaveRequests(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("leaves", managerService.getPendingLeaveRequests(email));
+        return "manager/leave-requests";
+    }
+
+    @PostMapping("/leave/approve")
+    public String approveLeave(@RequestParam Long leaveId, Authentication authentication) {
+        String email = authentication.getName();
+        try {
+            managerService.approveLeave(leaveId, email);
+        } catch (RuntimeException e) {
+            // In a real app we might pass an error message to the view
+        }
+        return "redirect:/manager/leave-requests";
+    }
+
+    @PostMapping("/leave/reject")
+    public String rejectLeave(@RequestParam Long leaveId,
+            @RequestParam(required = false) String managerComment,
+            Authentication authentication) {
+        String email = authentication.getName();
+        try {
+            managerService.rejectLeave(leaveId, managerComment, email);
+        } catch (RuntimeException e) {
+            // Fallback
+        }
+        return "redirect:/manager/leave-requests";
     }
 }
