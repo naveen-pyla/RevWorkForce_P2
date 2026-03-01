@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Notifications</title>
+</head>
+
+<body>
+    <h2>My Notifications</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="n : ${notifications}"
+                th:style="${!n.read ? 'font-weight:bold; background-color:#f0f8ff;' : ''}">
+                <td th:text="${n.message}"></td>
+                <td th:text="${n.createdAt}"></td>
+                <td th:text="${n.read ? 'Read' : 'Unread'}"></td>
+                <td>
+                    <a th:if="${!n.read}" th:href="@{/notifications/read/{id}(id=${n.notificationId})}">Mark as Read</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(notifications)}">
+                <td colspan="4" style="text-align: center;">No notifications</td>
+            </tr>
+        </tbody>
+    </table>
+    <br><br>
+    <a th:href="@{/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

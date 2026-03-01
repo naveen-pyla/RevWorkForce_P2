@@ -60,4 +60,11 @@ public class EmployeeController {
 
         return "employee/my-leaves";
     }
+
+    @GetMapping("/leave-balances")
+    public String viewLeaveBalances(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("balances", employeeService.getMyLeaveBalances(email));
+        return "employee/leave-balances";
+    }
 }

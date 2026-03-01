@@ -111,4 +111,47 @@ public class ManagerService {
                 .build();
         notificationRepository.save(notification);
     }
+
+    @Transactional
+    public void applyLeave(LeaveApplication leaveApplication, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Employee employee = employeeRepository.findByUser(user);
+
+        leaveApplication.setEmployee(employee);
+        leaveApplication.setStatus("PENDING");
+        leaveApplication.setAppliedOn(LocalDateTime.now());
+
+        leaveApplicationRepository.save(leaveApplication);
+
+        // Notify Manager/Admin
+        Employee manager = employee.getManager();
+
+        if (manager != null) {
+            Notification notification = Notification.builder()
+                    .user(manager.getUser())
+                    .message("New leave request from " + employee.getFirstName())
+                    .isRead(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            notificationRepository.save(notification);
+        }
+    }
+
+    public List<LeaveApplication> getMyLeaves(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Employee employee = employeeRepository.findByUser(user);
+        return leaveApplicationRepository.findByEmployee(employee);
+    }
+
+    public List<LeaveBalance> getMyLeaveBalances(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Employee employee = employeeRepository.findByUser(user);
+        return leaveBalanceRepository.findAll().stream()
+                .filter(lb -> lb.getEmployee().getEmpId().equals(employee.getEmpId())).toList();
+    }
 }

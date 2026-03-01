@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.revworkforce.entity.LeaveApplication;
 import com.revworkforce.repository.LeaveTypeRepository;
-import com.revworkforce.service.EmployeeService;
 
 @Controller
 @RequestMapping("/manager")
@@ -22,7 +21,6 @@ import com.revworkforce.service.EmployeeService;
 public class ManagerController {
     private final AnnouncementRepository announcementRepository;
     private final ManagerService managerService;
-    private final EmployeeService employeeService;
     private final LeaveTypeRepository leaveTypeRepository;
 
     @GetMapping("/announcements")
@@ -75,14 +73,21 @@ public class ManagerController {
     @PostMapping("/apply-leave")
     public String applyLeave(@ModelAttribute LeaveApplication leaveApplication, Authentication authentication) {
         String email = authentication.getName();
-        employeeService.applyLeave(leaveApplication, email);
+        managerService.applyLeave(leaveApplication, email);
         return "redirect:/manager/my-leaves";
     }
 
     @GetMapping("/my-leaves")
     public String viewMyLeaves(Model model, Authentication authentication) {
         String email = authentication.getName();
-        model.addAttribute("leaves", employeeService.getMyLeaves(email));
+        model.addAttribute("leaves", managerService.getMyLeaves(email));
         return "manager/my-leaves";
+    }
+
+    @GetMapping("/leave-balances")
+    public String viewLeaveBalances(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("balances", managerService.getMyLeaveBalances(email));
+        return "manager/leave-balances";
     }
 }

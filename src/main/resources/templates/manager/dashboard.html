@@ -7,6 +7,13 @@
 
 <body>
     <h2>Welcome Manager</h2>
+
+    <a th:href="@{/notifications}"
+        style="display:inline-block; margin-bottom: 15px; background: #e0f7fa; padding: 5px 10px; border-radius: 5px; text-decoration: none; color: #006064; font-weight: bold;">
+        🔔 Notifications (<span th:text="${unreadCount}"></span>)
+    </a>
+    <br />
+
     <a th:href="@{/manager/announcements}">
         View Announcements
     </a>
@@ -21,6 +28,10 @@
     <br />
     <a th:href="@{/manager/my-leaves}">
         View My Leaves
+    </a>
+    <br />
+    <a th:href="@{/manager/leave-balances}">
+        View Leave Balances
     </a>
     <br />
     <form th:action="@{/logout}" method="post" style="display:inline;">

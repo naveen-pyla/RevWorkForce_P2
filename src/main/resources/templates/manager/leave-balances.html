@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>My Leave Balances</title>
+</head>
+
+<body>
+    <h2>My Leave Balances</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Leave Type</th>
+                <th>Balance (Days)</th>
+                <th>Max Per Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="balance : ${balances}">
+                <td th:text="${balance.leaveType.leaveName}"></td>
+                <td th:text="${balance.balanceDays}"></td>
+                <td th:text="${balance.leaveType.maxPerYear}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <br><br>
+    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

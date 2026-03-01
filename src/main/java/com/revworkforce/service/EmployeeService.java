@@ -2,10 +2,12 @@ package com.revworkforce.service;
 
 import com.revworkforce.entity.Employee;
 import com.revworkforce.entity.LeaveApplication;
+import com.revworkforce.entity.LeaveBalance;
 import com.revworkforce.entity.Notification;
 import com.revworkforce.entity.User;
 import com.revworkforce.repository.EmployeeRepository;
 import com.revworkforce.repository.LeaveApplicationRepository;
+import com.revworkforce.repository.LeaveBalanceRepository;
 import com.revworkforce.repository.NotificationRepository;
 import com.revworkforce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class EmployeeService {
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
     private final LeaveApplicationRepository leaveApplicationRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
     private final NotificationRepository notificationRepository;
 
     @Transactional
@@ -57,5 +60,21 @@ public class EmployeeService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Employee employee = employeeRepository.findByUser(user);
         return leaveApplicationRepository.findByEmployee(employee);
+    }
+
+    public List<LeaveBalance> getMyLeaveBalances(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Employee employee = employeeRepository.findByUser(user);
+        // We'll need a method findByEmployee in LeaveBalanceRepository, let's assume it
+        // exists or use findAll + stream or list. I'll check/add if needed... wait,
+        // EmployeeService has access to leaveBalanceRepository. We need a method in
+        // LeaveBalanceRepository. Let's add it there first instead, or use stream.
+        // I checked LeaveBalanceRepository: it has void deleteByEmployee(Employee
+        // employee); but not List<LeaveBalance> findByEmployee(Employee employee); I
+        // should add that. Let's use stream on all for now or I can update repo. Wait,
+        // I'll update Repo.
+        return leaveBalanceRepository.findAll().stream()
+                .filter(lb -> lb.getEmployee().getEmpId().equals(employee.getEmpId())).toList();
     }
 }
