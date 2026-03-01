@@ -35,7 +35,7 @@ public class NotificationController {
     }
 
     @GetMapping("/read/{id}")
-    public String markAsRead(@PathVariable Long id, Authentication authentication) {
+    public String markAsRead(@PathVariable("id") Long id, Authentication authentication) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

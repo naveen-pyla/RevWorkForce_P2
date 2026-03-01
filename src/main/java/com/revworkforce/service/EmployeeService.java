@@ -12,6 +12,8 @@ import com.revworkforce.repository.LeaveApplicationRepository;
 import com.revworkforce.repository.LeaveBalanceRepository;
 import com.revworkforce.repository.NotificationRepository;
 import com.revworkforce.repository.UserRepository;
+import com.revworkforce.entity.PerformanceReview;
+import com.revworkforce.repository.PerformanceReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class EmployeeService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final NotificationRepository notificationRepository;
     private final GoalRepository goalRepository;
+    private final PerformanceReviewRepository performanceReviewRepository;
 
     @Transactional
     public void applyLeave(LeaveApplication leaveApplication, String email) {
@@ -113,5 +116,12 @@ public class EmployeeService {
                     .build();
             notificationRepository.save(notification);
         }
+    }
+
+    public List<PerformanceReview> getMyPerformanceReviews(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Employee employee = employeeRepository.findByUser(user);
+        return performanceReviewRepository.findByEmployee_EmpIdOrderByYearDesc(employee.getEmpId());
     }
 }

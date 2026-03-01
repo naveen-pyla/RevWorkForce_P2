@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>My Reviews</title>
+</head>
+
+<body>
+    <h2>My Performance Reviews</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Rating</th>
+                <th>Comments</th>
+                <th>Published At</th>
+                <th>Reviewed By</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="review : ${reviews}">
+                <td th:text="${review.year}"></td>
+                <td th:text="${review.rating} + ' / 5'"></td>
+                <td th:text="${review.comments}"></td>
+                <td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${review.reviewedBy.firstName + ' ' + review.reviewedBy.lastName}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(reviews)}">
+                <td colspan="5" style="text-align: center;">No reviews available</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <a th:href="@{/employee/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

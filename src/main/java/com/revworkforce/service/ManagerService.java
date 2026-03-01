@@ -11,6 +11,8 @@ import com.revworkforce.repository.GoalRepository;
 import com.revworkforce.repository.LeaveApplicationRepository;
 import com.revworkforce.repository.LeaveBalanceRepository;
 import com.revworkforce.repository.NotificationRepository;
+import com.revworkforce.entity.PerformanceReview;
+import com.revworkforce.repository.PerformanceReviewRepository;
 import com.revworkforce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ManagerService {
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final NotificationRepository notificationRepository;
     private final GoalRepository goalRepository;
+    private final PerformanceReviewRepository performanceReviewRepository;
 
     public List<LeaveApplication> getPendingLeaveRequests(String managerEmail) {
         User user = userRepository.findByEmail(managerEmail)
@@ -187,6 +190,40 @@ public class ManagerService {
         Notification notification = Notification.builder()
                 .user(employee.getUser())
                 .message("You have been assigned a new goal: " + goal.getTitle())
+                .isRead(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
+    }
+
+    @Transactional
+    public void createPerformanceReview(PerformanceReview review, Long employeeId, String managerEmail) {
+        User user = userRepository.findByEmail(managerEmail)
+                .orElseThrow(() -> new RuntimeException("Manager user not found"));
+        Employee manager = employeeRepository.findByUser(user);
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        if (!employee.getManager().getEmpId().equals(manager.getEmpId())) {
+            throw new RuntimeException("Employee does not belong to this manager");
+        }
+
+        // optional: enforce unique constraint here or let DB handle it
+
+        review.setEmployee(employee);
+        review.setReviewedBy(manager);
+        review.setCreatedAt(LocalDateTime.now());
+
+        try {
+            performanceReviewRepository.save(review);
+        } catch (Exception e) {
+            throw new RuntimeException("Review for this year already exists for this employee.");
+        }
+
+        Notification notification = Notification.builder()
+                .user(employee.getUser())
+                .message("Your Performance Review for year " + review.getYear() + " has been published.")
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();

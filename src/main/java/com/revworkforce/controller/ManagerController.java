@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.revworkforce.entity.Goal;
 import com.revworkforce.entity.LeaveApplication;
+import com.revworkforce.entity.PerformanceReview;
 import com.revworkforce.repository.LeaveTypeRepository;
 
 @Controller
@@ -41,7 +42,7 @@ public class ManagerController {
     }
 
     @PostMapping("/leave/approve")
-    public String approveLeave(@RequestParam Long leaveId, Authentication authentication) {
+    public String approveLeave(@RequestParam("leaveId") Long leaveId, Authentication authentication) {
         String email = authentication.getName();
         try {
             managerService.approveLeave(leaveId, email);
@@ -52,8 +53,8 @@ public class ManagerController {
     }
 
     @PostMapping("/leave/reject")
-    public String rejectLeave(@RequestParam Long leaveId,
-            @RequestParam(required = false) String managerComment,
+    public String rejectLeave(@RequestParam("leaveId") Long leaveId,
+            @RequestParam(name = "managerComment", required = false) String managerComment,
             Authentication authentication) {
         String email = authentication.getName();
         try {
@@ -101,9 +102,32 @@ public class ManagerController {
     }
 
     @PostMapping("/assign-goal")
-    public String assignGoal(@ModelAttribute Goal goal, @RequestParam Long employeeId, Authentication authentication) {
+    public String assignGoal(@ModelAttribute Goal goal, @RequestParam("employeeId") Long employeeId,
+            Authentication authentication) {
         String email = authentication.getName();
         managerService.assignGoal(goal, employeeId, email);
+        return "redirect:/manager/dashboard";
+    }
+
+    @GetMapping("/write-review")
+    public String showWriteReviewForm(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("employees", managerService.getMyEmployees(email));
+        model.addAttribute("review", new PerformanceReview());
+        return "manager/write-review";
+    }
+
+    @PostMapping("/write-review")
+    public String writeReview(@ModelAttribute PerformanceReview review, @RequestParam("employeeId") Long employeeId,
+            Authentication authentication, Model model) {
+        String email = authentication.getName();
+        try {
+            managerService.createPerformanceReview(review, employeeId, email);
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("employees", managerService.getMyEmployees(email));
+            return "manager/write-review";
+        }
         return "redirect:/manager/dashboard";
     }
 }

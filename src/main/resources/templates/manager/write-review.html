@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Write Performance Review</title>
+</head>
+
+<body>
+    <h2>Write Performance Review</h2>
+
+    <p style="color:red;" th:if="${error}" th:text="${error}"></p>
+
+    <form th:action="@{/manager/write-review}" th:object="${review}" method="post">
+
+        <label>Select Employee:</label>
+        <select name="employeeId" required>
+            <option value="" disabled selected>-- Select an Employee --</option>
+            <option th:each="emp : ${employees}" th:value="${emp.empId}"
+                th:text="${emp.firstName + ' ' + emp.lastName}">
+            </option>
+        </select>
+        <br><br>
+
+        <label>Year:</label>
+        <input type="number" th:field="*{year}" min="2000" max="2100" required />
+        <br><br>
+
+        <label>Rating (1-5):</label>
+        <input type="number" th:field="*{rating}" min="1" max="5" required />
+        <br><br>
+
+        <label>Comments:</label>
+        <textarea th:field="*{comments}" rows="4" cols="50" required></textarea>
+        <br><br>
+
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <br>
+    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

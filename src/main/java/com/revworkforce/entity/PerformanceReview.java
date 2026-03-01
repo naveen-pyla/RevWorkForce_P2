@@ -4,12 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(
-        name = "performance_review",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"emp_id", "year"})
-        }
-)
+@Table(name = "performance_review", uniqueConstraints = {
+                @UniqueConstraint(columnNames = { "emp_id", "year" })
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,28 +14,24 @@ import lombok.*;
 @Builder
 public class PerformanceReview {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long reviewId;
 
-    @ManyToOne
-    @JoinColumn(name = "emp_id", nullable = false)
-    private Employee employee;
+        @ManyToOne
+        @JoinColumn(name = "emp_id", nullable = false)
+        private Employee employee;
 
-    private Integer year;
+        @ManyToOne
+        @JoinColumn(name = "reviewed_by", nullable = false)
+        private Employee reviewedBy;
 
-    @Column(length = 2000)
-    private String achievements;
+        private Integer year;
 
-    @Column(length = 2000)
-    private String improvements;
+        private Integer rating;
 
-    private Integer selfRating;
+        @Column(length = 2000)
+        private String comments;
 
-    private Integer managerRating;
-
-    @Column(length = 2000)
-    private String managerFeedback;
-
-    private String status; // SUBMITTED, REVIEWED
+        private java.time.LocalDateTime createdAt;
 }

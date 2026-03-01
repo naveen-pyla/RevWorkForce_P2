@@ -77,9 +77,16 @@ public class EmployeeController {
     }
 
     @PostMapping("/goals/complete")
-    public String completeGoal(@RequestParam Long goalId, Authentication authentication) {
+    public String completeGoal(@RequestParam("goalId") Long goalId, Authentication authentication) {
         String email = authentication.getName();
         employeeService.completeGoal(goalId, email);
         return "redirect:/employee/my-goals";
+    }
+
+    @GetMapping("/my-reviews")
+    public String viewMyReviews(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("reviews", employeeService.getMyPerformanceReviews(email));
+        return "employee/my-reviews";
     }
 }

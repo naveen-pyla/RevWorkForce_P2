@@ -51,7 +51,7 @@ public class AdminController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteEmployee(@PathVariable Long id) {
+    public String deleteEmployee(@PathVariable("id") Long id) {
 
         adminService.deleteEmployee(id);
 
@@ -59,7 +59,7 @@ public class AdminController {
     }
 
     @GetMapping("/manager/{id}")
-    public String showManagerForm(@PathVariable Long id, Model model) {
+    public String showManagerForm(@PathVariable("id") Long id, Model model) {
 
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
@@ -80,9 +80,9 @@ public class AdminController {
         return "admin/assign-manager";
     }
 
-    @PostMapping("/manager/update")
-    public String updateManager(@RequestParam Long empId,
-            @RequestParam Long managerId) {
+    @PostMapping("/employees/update-manager")
+    public String updateManager(@RequestParam("empId") Long empId,
+            @RequestParam("managerId") Long managerId) {
 
         adminService.updateEmployeeManager(empId, managerId);
 
@@ -119,7 +119,7 @@ public class AdminController {
     }
 
     @GetMapping("/announcements/delete/{id}")
-    public String deleteAnnouncement(@PathVariable Long id) {
+    public String deleteAnnouncement(@PathVariable("id") Long id) {
 
         announcementRepository.deleteById(id);
 
@@ -133,7 +133,7 @@ public class AdminController {
     }
 
     @PostMapping("/leave/approve")
-    public String approveLeave(@RequestParam Long leaveId, Authentication authentication) {
+    public String approveLeave(@RequestParam("leaveId") Long leaveId, Authentication authentication) {
         try {
             adminService.approveLeaveAdmin(leaveId, authentication.getName());
         } catch (RuntimeException e) {
@@ -143,8 +143,8 @@ public class AdminController {
     }
 
     @PostMapping("/leave/reject")
-    public String rejectLeave(@RequestParam Long leaveId,
-            @RequestParam(required = false) String managerComment,
+    public String rejectLeave(@RequestParam("leaveId") Long leaveId,
+            @RequestParam(name = "managerComment", required = false) String managerComment,
             Authentication authentication) {
         try {
             adminService.rejectLeaveAdmin(leaveId, managerComment, authentication.getName());
