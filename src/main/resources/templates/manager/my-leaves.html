@@ -1,0 +1,18 @@
+<table border="1">
+    <tr>
+        <th>Type</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Status</th>
+    </tr>
+
+    <tr th:each="l : ${leaves}">
+        <td th:text="${l.leaveType.leaveName}"></td>
+        <td th:text="${l.startDate}"></td>
+        <td th:text="${l.endDate}"></td>
+        <td th:text="${l.status}"></td>
+    </tr>
+</table>
+
+<br><br>
+<a th:href="@{/manager/dashboard}">Back to Dashboard</a>

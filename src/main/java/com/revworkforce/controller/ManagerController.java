@@ -7,9 +7,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.revworkforce.entity.LeaveApplication;
+import com.revworkforce.repository.LeaveTypeRepository;
+import com.revworkforce.service.EmployeeService;
 
 @Controller
 @RequestMapping("/manager")
@@ -17,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ManagerController {
     private final AnnouncementRepository announcementRepository;
     private final ManagerService managerService;
+    private final EmployeeService employeeService;
+    private final LeaveTypeRepository leaveTypeRepository;
 
     @GetMapping("/announcements")
     public String viewEmployeeAnnouncements(Model model) {
@@ -56,5 +63,26 @@ public class ManagerController {
             // Fallback
         }
         return "redirect:/manager/leave-requests";
+    }
+
+    @GetMapping("/apply-leave")
+    public String showLeaveForm(Model model) {
+        model.addAttribute("leaveApplication", new LeaveApplication());
+        model.addAttribute("leaveTypes", leaveTypeRepository.findAll());
+        return "manager/apply-leave";
+    }
+
+    @PostMapping("/apply-leave")
+    public String applyLeave(@ModelAttribute LeaveApplication leaveApplication, Authentication authentication) {
+        String email = authentication.getName();
+        employeeService.applyLeave(leaveApplication, email);
+        return "redirect:/manager/my-leaves";
+    }
+
+    @GetMapping("/my-leaves")
+    public String viewMyLeaves(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("leaves", employeeService.getMyLeaves(email));
+        return "manager/my-leaves";
     }
 }
