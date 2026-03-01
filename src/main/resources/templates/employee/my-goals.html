@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>My Goals</title>
+</head>
+
+<body>
+    <h2>My Goals</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Assigned At</th>
+                <th>Assigned By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="goal : ${goals}">
+                <td th:text="${goal.title}"></td>
+                <td th:text="${goal.description}"></td>
+                <td th:text="${goal.status}"></td>
+                <td th:text="${goal.dueDate}"></td>
+                <td th:text="${#temporals.format(goal.assignedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${goal.assignedBy.firstName + ' ' + goal.assignedBy.lastName}"></td>
+                <td>
+                    <form th:if="${goal.status == 'ASSIGNED'}" th:action="@{/employee/goals/complete}" method="post"
+                        style="display:inline;">
+                        <input type="hidden" name="goalId" th:value="${goal.goalId}" />
+                        <button type="submit">Mark Completed</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(goals)}">
+                <td colspan="7" style="text-align: center;">No goals assigned</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <a th:href="@{/employee/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

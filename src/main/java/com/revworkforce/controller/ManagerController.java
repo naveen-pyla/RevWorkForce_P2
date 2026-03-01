@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.revworkforce.entity.Goal;
 import com.revworkforce.entity.LeaveApplication;
 import com.revworkforce.repository.LeaveTypeRepository;
 
@@ -89,5 +90,20 @@ public class ManagerController {
         String email = authentication.getName();
         model.addAttribute("balances", managerService.getMyLeaveBalances(email));
         return "manager/leave-balances";
+    }
+
+    @GetMapping("/assign-goal")
+    public String showAssignGoalForm(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("employees", managerService.getMyEmployees(email));
+        model.addAttribute("goal", new Goal());
+        return "manager/assign-goal";
+    }
+
+    @PostMapping("/assign-goal")
+    public String assignGoal(@ModelAttribute Goal goal, @RequestParam Long employeeId, Authentication authentication) {
+        String email = authentication.getName();
+        managerService.assignGoal(goal, employeeId, email);
+        return "redirect:/manager/dashboard";
     }
 }

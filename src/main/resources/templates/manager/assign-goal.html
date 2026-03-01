@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Assign Goal</title>
+</head>
+
+<body>
+    <h2>Assign Goal to Employee</h2>
+
+    <form th:action="@{/manager/assign-goal}" th:object="${goal}" method="post">
+
+        <label>Select Employee:</label>
+        <select name="employeeId" required>
+            <option value="" disabled selected>-- Select an Employee --</option>
+            <option th:each="emp : ${employees}" th:value="${emp.empId}"
+                th:text="${emp.firstName + ' ' + emp.lastName}">
+            </option>
+        </select>
+        <br><br>
+
+        <label>Title:</label>
+        <input type="text" th:field="*{title}" required />
+        <br><br>
+
+        <label>Description:</label>
+        <textarea th:field="*{description}" required></textarea>
+        <br><br>
+
+        <label>Due Date:</label>
+        <input type="date" th:field="*{dueDate}" required />
+        <br><br>
+
+        <button type="submit">Assign Goal</button>
+    </form>
+
+    <br>
+    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

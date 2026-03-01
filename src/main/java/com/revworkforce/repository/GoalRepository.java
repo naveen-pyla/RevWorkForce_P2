@@ -10,5 +10,7 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 
     List<Goal> findByEmployee_EmpId(Long empId);
 
+    List<Goal> findByEmployee(Employee employee);
+
     void deleteByEmployee(Employee employee);
 }

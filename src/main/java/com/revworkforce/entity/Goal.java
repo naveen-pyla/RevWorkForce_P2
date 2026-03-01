@@ -3,6 +3,7 @@ package com.revworkforce.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "goals")
@@ -21,16 +22,19 @@ public class Goal {
     @JoinColumn(name = "emp_id", nullable = false)
     private Employee employee;
 
+    @Column(nullable = false)
+    private String title;
+
     @Column(length = 1000)
-    private String goalDesc;
+    private String description;
 
-    private LocalDate deadline;
+    private LocalDate dueDate;
 
-    private String priority; // HIGH, MEDIUM, LOW
+    private LocalDateTime assignedAt;
 
-    private String successMetric;
+    private String status; // ASSIGNED, COMPLETED
 
-    private Integer progress; // percentage
-
-    private String status; // NOT_STARTED, IN_PROGRESS, COMPLETED
+    @ManyToOne
+    @JoinColumn(name = "assigned_by", nullable = false)
+    private Employee assignedBy;
 }

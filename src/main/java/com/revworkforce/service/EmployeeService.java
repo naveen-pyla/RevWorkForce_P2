@@ -1,11 +1,13 @@
 package com.revworkforce.service;
 
 import com.revworkforce.entity.Employee;
+import com.revworkforce.entity.Goal;
 import com.revworkforce.entity.LeaveApplication;
 import com.revworkforce.entity.LeaveBalance;
 import com.revworkforce.entity.Notification;
 import com.revworkforce.entity.User;
 import com.revworkforce.repository.EmployeeRepository;
+import com.revworkforce.repository.GoalRepository;
 import com.revworkforce.repository.LeaveApplicationRepository;
 import com.revworkforce.repository.LeaveBalanceRepository;
 import com.revworkforce.repository.NotificationRepository;
@@ -26,6 +28,7 @@ public class EmployeeService {
     private final LeaveApplicationRepository leaveApplicationRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final NotificationRepository notificationRepository;
+    private final GoalRepository goalRepository;
 
     @Transactional
     public void applyLeave(LeaveApplication leaveApplication, String email) {
@@ -76,5 +79,39 @@ public class EmployeeService {
         // I'll update Repo.
         return leaveBalanceRepository.findAll().stream()
                 .filter(lb -> lb.getEmployee().getEmpId().equals(employee.getEmpId())).toList();
+    }
+
+    public List<Goal> getMyGoals(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Employee employee = employeeRepository.findByUser(user);
+        return goalRepository.findByEmployee(employee);
+    }
+
+    @Transactional
+    public void completeGoal(Long goalId, String email) {
+        Goal goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new RuntimeException("Goal not found"));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Employee employee = employeeRepository.findByUser(user);
+
+        if (!goal.getEmployee().getEmpId().equals(employee.getEmpId())) {
+            throw new RuntimeException("Not authorized to complete this goal");
+        }
+
+        goal.setStatus("COMPLETED");
+        goalRepository.save(goal);
+
+        if (employee.getManager() != null) {
+            Notification notification = Notification.builder()
+                    .user(employee.getManager().getUser())
+                    .message(employee.getFirstName() + " has completed a goal: " + goal.getTitle())
+                    .isRead(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            notificationRepository.save(notification);
+        }
     }
 }

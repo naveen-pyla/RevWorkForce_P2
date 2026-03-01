@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 // unused imports removed
 @Controller
@@ -66,5 +67,19 @@ public class EmployeeController {
         String email = authentication.getName();
         model.addAttribute("balances", employeeService.getMyLeaveBalances(email));
         return "employee/leave-balances";
+    }
+
+    @GetMapping("/my-goals")
+    public String viewMyGoals(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("goals", employeeService.getMyGoals(email));
+        return "employee/my-goals";
+    }
+
+    @PostMapping("/goals/complete")
+    public String completeGoal(@RequestParam Long goalId, Authentication authentication) {
+        String email = authentication.getName();
+        employeeService.completeGoal(goalId, email);
+        return "redirect:/employee/my-goals";
     }
 }

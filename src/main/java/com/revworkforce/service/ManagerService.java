@@ -1,11 +1,13 @@
 package com.revworkforce.service;
 
 import com.revworkforce.entity.Employee;
+import com.revworkforce.entity.Goal;
 import com.revworkforce.entity.LeaveApplication;
 import com.revworkforce.entity.LeaveBalance;
 import com.revworkforce.entity.Notification;
 import com.revworkforce.entity.User;
 import com.revworkforce.repository.EmployeeRepository;
+import com.revworkforce.repository.GoalRepository;
 import com.revworkforce.repository.LeaveApplicationRepository;
 import com.revworkforce.repository.LeaveBalanceRepository;
 import com.revworkforce.repository.NotificationRepository;
@@ -28,6 +30,7 @@ public class ManagerService {
     private final LeaveApplicationRepository leaveApplicationRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final NotificationRepository notificationRepository;
+    private final GoalRepository goalRepository;
 
     public List<LeaveApplication> getPendingLeaveRequests(String managerEmail) {
         User user = userRepository.findByEmail(managerEmail)
@@ -153,5 +156,40 @@ public class ManagerService {
         Employee employee = employeeRepository.findByUser(user);
         return leaveBalanceRepository.findAll().stream()
                 .filter(lb -> lb.getEmployee().getEmpId().equals(employee.getEmpId())).toList();
+    }
+
+    public List<Employee> getMyEmployees(String managerEmail) {
+        User user = userRepository.findByEmail(managerEmail)
+                .orElseThrow(() -> new RuntimeException("Manager user not found"));
+        Employee manager = employeeRepository.findByUser(user);
+        return employeeRepository.findByManager_EmpId(manager.getEmpId());
+    }
+
+    @Transactional
+    public void assignGoal(Goal goal, Long employeeId, String managerEmail) {
+        User user = userRepository.findByEmail(managerEmail)
+                .orElseThrow(() -> new RuntimeException("Manager user not found"));
+        Employee manager = employeeRepository.findByUser(user);
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        if (!employee.getManager().getEmpId().equals(manager.getEmpId())) {
+            throw new RuntimeException("Employee does not belong to this manager");
+        }
+
+        goal.setEmployee(employee);
+        goal.setAssignedBy(manager);
+        goal.setStatus("ASSIGNED");
+        goal.setAssignedAt(LocalDateTime.now());
+        goalRepository.save(goal);
+
+        Notification notification = Notification.builder()
+                .user(employee.getUser())
+                .message("You have been assigned a new goal: " + goal.getTitle())
+                .isRead(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
     }
 }
