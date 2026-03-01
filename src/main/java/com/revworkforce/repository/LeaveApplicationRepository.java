@@ -13,4 +13,8 @@ public interface LeaveApplicationRepository extends JpaRepository<LeaveApplicati
     List<LeaveApplication> findByEmployee_Manager_EmpId(Long managerId);
 
     void deleteByEmployee(Employee employee);
+
+    List<LeaveApplication> findByEmployee(Employee employee);
+
+    List<LeaveApplication> findByEmployee_Manager(Employee manager);
 }
