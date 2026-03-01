@@ -3,11 +3,9 @@ package com.revworkforce.controller;
 import com.revworkforce.dto.CreateEmployeeRequest;
 import com.revworkforce.entity.Announcement;
 import com.revworkforce.entity.Employee;
-import com.revworkforce.entity.User;
 import com.revworkforce.repository.AnnouncementRepository;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.EmployeeRepository;
-import com.revworkforce.repository.UserRepository;
 import com.revworkforce.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -15,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+// unused import removed
 import java.util.List;
 
 @Controller
@@ -26,8 +24,7 @@ public class AdminController {
     private final AdminService adminService;
     private final DepartmentRepository departmentRepository;
     private final EmployeeRepository employeeRepository;
-    private final AnnouncementRepository  announcementRepository;
-    private final UserRepository userRepository;
+    private final AnnouncementRepository announcementRepository;
 
     @GetMapping("/create-employee")
     public String showCreateEmployee(Model model) {
@@ -50,8 +47,9 @@ public class AdminController {
     public String listEmployees(Model model) {
 
         model.addAttribute("employees", employeeRepository.findAll());
-                return "admin/employee-list";
+        return "admin/employee-list";
     }
+
     @GetMapping("/delete/{id}")
     public String deleteEmployee(@PathVariable Long id) {
 
@@ -59,6 +57,7 @@ public class AdminController {
 
         return "redirect:/admin/employees";
     }
+
     @GetMapping("/manager/{id}")
     public String showManagerForm(@PathVariable Long id, Model model) {
 
@@ -80,21 +79,16 @@ public class AdminController {
 
         return "admin/assign-manager";
     }
+
     @PostMapping("/manager/update")
     public String updateManager(@RequestParam Long empId,
-                                @RequestParam Long managerId) {
+            @RequestParam Long managerId) {
 
-        Employee employee = employeeRepository.findById(empId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
-
-        Employee manager = employeeRepository.findById(managerId)
-                .orElseThrow(() -> new RuntimeException("Manager not found"));
-
-        employee.setManager(manager);
-        employeeRepository.save(employee);
+        adminService.updateEmployeeManager(empId, managerId);
 
         return "redirect:/admin/employees";
     }
+
     @GetMapping("/announcements")
     public String viewAnnouncements(Model model) {
 
@@ -111,25 +105,19 @@ public class AdminController {
 
         return "admin/create-announcement";
     }
+
     @PostMapping("/announcements/save")
     public String saveAnnouncement(@ModelAttribute Announcement announcement,
-                                   Authentication authentication) {
+            Authentication authentication) {
 
         // Logged-in user email
         String email = authentication.getName();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Employee employee = employeeRepository.findByUser(user);
-
-        announcement.setCreatedBy(employee);
-        announcement.setCreatedAt(LocalDateTime.now());
-
-        announcementRepository.save(announcement);
+        adminService.saveAnnouncement(announcement, email);
 
         return "redirect:/admin/announcements";
     }
+
     @GetMapping("/announcements/delete/{id}")
     public String deleteAnnouncement(@PathVariable Long id) {
 

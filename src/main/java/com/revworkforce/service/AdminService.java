@@ -21,6 +21,7 @@ public class AdminService {
     private final GoalRepository goalRepository;
     private final PerformanceReviewRepository performanceReviewRepository;
     private final NotificationRepository notificationRepository;
+    private final AnnouncementRepository announcementRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -99,5 +100,32 @@ public class AdminService {
 
         // 3️⃣ Delete user
         userRepository.delete(employee.getUser());
+    }
+
+    @Transactional
+    public void updateEmployeeManager(Long empId, Long managerId) {
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        Employee manager = employeeRepository.findById(managerId)
+                .orElseThrow(() -> new RuntimeException("Manager not found"));
+
+        employee.setManager(manager);
+        employeeRepository.save(employee);
+    }
+
+    @Transactional
+    public void saveAnnouncement(Announcement announcement, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Employee employee = employeeRepository.findByUser(user);
+
+        announcement.setCreatedBy(employee);
+        // LocalDateTime is imported in Service? Let's check... AdminService imports
+        // import java.time.LocalDateTime; No, wait. I should add import.
+        announcement.setCreatedAt(java.time.LocalDateTime.now());
+
+        announcementRepository.save(announcement);
     }
 }
