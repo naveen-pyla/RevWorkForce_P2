@@ -124,4 +124,20 @@ public class EmployeeService {
         Employee employee = employeeRepository.findByUser(user);
         return performanceReviewRepository.findByEmployee_EmpIdOrderByYearDesc(employee.getEmpId());
     }
+
+    public Employee getProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return employeeRepository.findByUser(user);
+    }
+
+    @Transactional
+    public void updateProfile(String email, String phone, String address) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Employee employee = employeeRepository.findByUser(user);
+        employee.setPhone(phone);
+        employee.setAddress(address);
+        employeeRepository.save(employee);
+    }
 }

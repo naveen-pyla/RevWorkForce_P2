@@ -2,6 +2,7 @@ package com.revworkforce.controller;
 
 import com.revworkforce.repository.AnnouncementRepository;
 import com.revworkforce.service.ManagerService;
+import com.revworkforce.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import com.revworkforce.repository.LeaveTypeRepository;
 public class ManagerController {
     private final AnnouncementRepository announcementRepository;
     private final ManagerService managerService;
+    private final EmployeeService employeeService;
     private final LeaveTypeRepository leaveTypeRepository;
 
     @GetMapping("/announcements")
@@ -129,5 +131,21 @@ public class ManagerController {
             return "manager/write-review";
         }
         return "redirect:/manager/dashboard";
+    }
+
+    @GetMapping("/profile")
+    public String viewProfile(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("employee", employeeService.getProfile(email));
+        return "manager/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam("phone") String phone,
+            @RequestParam("address") String address,
+            Authentication authentication) {
+        String email = authentication.getName();
+        employeeService.updateProfile(email, phone, address);
+        return "redirect:/manager/profile";
     }
 }

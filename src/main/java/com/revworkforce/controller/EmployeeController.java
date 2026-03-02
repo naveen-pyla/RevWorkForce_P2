@@ -89,4 +89,20 @@ public class EmployeeController {
         model.addAttribute("reviews", employeeService.getMyPerformanceReviews(email));
         return "employee/my-reviews";
     }
+
+    @GetMapping("/profile")
+    public String viewProfile(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("employee", employeeService.getProfile(email));
+        return "employee/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam("phone") String phone,
+            @RequestParam("address") String address,
+            Authentication authentication) {
+        String email = authentication.getName();
+        employeeService.updateProfile(email, phone, address);
+        return "redirect:/employee/profile";
+    }
 }

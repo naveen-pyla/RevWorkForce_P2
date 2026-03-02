@@ -4,10 +4,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.revworkforce.repository.EventRepository;
 import com.revworkforce.repository.NotificationRepository;
 import com.revworkforce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
+
+import java.time.LocalDate;
 
 @Controller
 @RequiredArgsConstructor
@@ -15,6 +18,7 @@ public class DashboardController {
 
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
+    private final EventRepository eventRepository;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -60,5 +64,7 @@ public class DashboardController {
                 model.addAttribute("unreadCount", unreadCount);
             });
         }
+        model.addAttribute("upcomingEvents",
+                eventRepository.findByEventDateGreaterThanEqualOrderByEventDateAsc(LocalDate.now()));
     }
 }

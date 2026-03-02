@@ -6,23 +6,24 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "events")
+@Table(name = "event")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Events {
+public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eventId;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "emp_id")
-    private Employee employee; // Optional if event is employee specific
+    @Column(nullable = false)
+    private String title;
 
-    private String eventType;
+    @Column(length = 1000)
+    private String description;
 
+    @Column(nullable = false)
     private LocalDate eventDate;
 }

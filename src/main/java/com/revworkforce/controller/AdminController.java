@@ -4,9 +4,12 @@ import com.revworkforce.dto.CreateEmployeeRequest;
 import com.revworkforce.entity.Announcement;
 import com.revworkforce.entity.Employee;
 import com.revworkforce.repository.AnnouncementRepository;
+import com.revworkforce.entity.Event;
 import com.revworkforce.repository.DepartmentRepository;
 import com.revworkforce.repository.EmployeeRepository;
+import com.revworkforce.repository.EventRepository;
 import com.revworkforce.service.AdminService;
+import com.revworkforce.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -25,6 +28,8 @@ public class AdminController {
     private final DepartmentRepository departmentRepository;
     private final EmployeeRepository employeeRepository;
     private final AnnouncementRepository announcementRepository;
+    private final EventRepository eventRepository;
+    private final EmployeeService employeeService;
 
     @GetMapping("/create-employee")
     public String showCreateEmployee(Model model) {
@@ -154,4 +159,43 @@ public class AdminController {
         return "redirect:/admin/leave-requests";
     }
 
+    @GetMapping("/profile")
+    public String viewProfile(Model model, Authentication authentication) {
+        String email = authentication.getName();
+        model.addAttribute("employee", employeeService.getProfile(email));
+        return "admin/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam("phone") String phone,
+            @RequestParam("address") String address,
+            Authentication authentication) {
+        String email = authentication.getName();
+        employeeService.updateProfile(email, phone, address);
+        return "redirect:/admin/profile";
+    }
+
+    @GetMapping("/events")
+    public String viewEvents(Model model) {
+        model.addAttribute("events", eventRepository.findAll());
+        return "admin/events";
+    }
+
+    @GetMapping("/events/create")
+    public String showCreateEventForm(Model model) {
+        model.addAttribute("event", new Event());
+        return "admin/create-event";
+    }
+
+    @PostMapping("/events/save")
+    public String saveEvent(@ModelAttribute Event event) {
+        eventRepository.save(event);
+        return "redirect:/admin/events";
+    }
+
+    @GetMapping("/events/delete/{id}")
+    public String deleteEvent(@PathVariable("id") Long id) {
+        eventRepository.deleteById(id);
+        return "redirect:/admin/events";
+    }
 }

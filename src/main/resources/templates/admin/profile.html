@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>My Profile</title>
+</head>
+
+<body>
+    <h2>Admin Profile</h2>
+
+    <p><strong>First Name:</strong> <span th:text="${employee.firstName}"></span></p>
+    <p><strong>Last Name:</strong> <span th:text="${employee.lastName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${employee.user.email}"></span></p>
+    <p><strong>Role:</strong> <span th:text="${employee.user.role}"></span></p>
+    <p><strong>Department:</strong> <span
+            th:text="${employee.department != null ? employee.department.departmentName : 'N/A'}"></span></p>
+    <p><strong>Designation:</strong> <span th:text="${employee.designation}"></span></p>
+    <p><strong>Joining Date:</strong> <span th:text="${employee.joiningDate}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${employee.status}"></span></p>
+
+    <div th:if="${employee.manager != null}">
+        <h3>Manager Info</h3>
+        <p><strong>Manager Name:</strong> <span
+                th:text="${employee.manager.firstName + ' ' + employee.manager.lastName}"></span></p>
+        <p><strong>Manager Email:</strong> <span th:text="${employee.manager.user.email}"></span></p>
+    </div>
+
+    <h3>Update Profile</h3>
+    <form th:action="@{/admin/profile/update}" method="post">
+        <label>Contact Number:</label>
+        <input type="text" name="phone" th:value="${employee.phone}" required />
+        <br><br>
+
+        <label>Address:</label>
+        <textarea name="address" required th:text="${employee.address}"></textarea>
+        <br><br>
+
+        <button type="submit">Update Profile</button>
+    </form>
+
+    <br>
+    <a th:href="@{/admin/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>

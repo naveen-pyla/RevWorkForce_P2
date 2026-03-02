@@ -14,6 +14,10 @@
     </a>
 
     <div class="mt-4">
+        <a class="btn btn-info mb-2" th:href="@{/admin/profile}">
+            👤 My Profile
+        </a>
+        <br />
 
         <a class="btn btn-primary mb-2" th:href="@{/admin/create-employee}">
             Create Employee
@@ -32,6 +36,23 @@
         </a>
 
     </div>
+
+    <a th:href="@{/admin/events}" class="btn btn-secondary mb-2 mt-4" style="display:inline-block; margin-top:15px;">
+        Manage Events
+    </a>
+
+    <hr>
+    <h3>Upcoming Events</h3>
+    <ul th:if="${not #lists.isEmpty(upcomingEvents)}">
+        <li th:each="event : ${upcomingEvents}">
+            <strong th:text="${event.eventDate}"></strong> -
+            <span th:text="${event.title}"></span>
+            <em th:if="${event.description != null and !event.description.isEmpty()}"
+                th:text="'(' + ${event.description} + ')'"></em>
+        </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(upcomingEvents)}">No upcoming events!</p>
+    <br>
     <form th:action="@{/logout}" method="post" style="display:inline;">
         <button type="submit" class="btn btn-danger">Logout</button>
     </form>

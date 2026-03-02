@@ -14,6 +14,12 @@
     </a>
     <br>
 
+    <a th:href="@{/employee/profile}"
+        style="background: #e3f2fd; padding: 5px 10px; border-radius: 5px; text-decoration: none; display: inline-block; margin-bottom: 15px;">
+        👤 My Profile
+    </a>
+    <br>
+
     <a th:href="@{/employee/announcements}">
         View Announcements
     </a>
@@ -39,6 +45,19 @@
         style="background: #e3f2fd; padding: 5px 10px; border-radius: 5px; text-decoration: none; display: inline-block; margin-bottom: 15px;">
         📝 My Reviews
     </a>
+    <br>
+
+    <hr>
+    <h3>Upcoming Events</h3>
+    <ul th:if="${not #lists.isEmpty(upcomingEvents)}">
+        <li th:each="event : ${upcomingEvents}">
+            <strong th:text="${event.eventDate}"></strong> -
+            <span th:text="${event.title}"></span>
+            <em th:if="${event.description != null and !event.description.isEmpty()}"
+                th:text="'(' + ${event.description} + ')'"></em>
+        </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(upcomingEvents)}">No upcoming events!</p>
     <br>
     <form th:action="@{/logout}" method="post" style="display:inline;">
         <button type="submit" class="btn btn-danger">Logout</button>

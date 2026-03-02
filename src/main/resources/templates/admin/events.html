@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Manage Events</title>
+</head>
+
+<body>
+    <h2>Events</h2>
+
+    <a th:href="@{/admin/events/create}">Create New Event</a>
+    <br><br>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Event Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="event : ${events}">
+                <td th:text="${event.title}"></td>
+                <td th:text="${event.description}"></td>
+                <td th:text="${event.eventDate}"></td>
+                <td>
+                    <a th:href="@{/admin/events/delete/{id}(id=${event.id})}">Delete</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(events)}">
+                <td colspan="4" style="text-align: center;">No events found</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <a th:href="@{/admin/dashboard}">Back to Dashboard</a>
+</body>
+
+</html>
