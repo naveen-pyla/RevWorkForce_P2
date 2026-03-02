@@ -205,4 +205,39 @@ public class AdminController {
         eventRepository.deleteById(id);
         return "redirect:/admin/events";
     }
+
+    // --- Department Management ---
+    @GetMapping("/departments")
+    public String listDepartments(Model model) {
+        model.addAttribute("departments", departmentRepository.findAll());
+        model.addAttribute("newDepartment", new com.revworkforce.entity.Department());
+        return "admin/departments";
+    }
+
+    @PostMapping("/departments/save")
+    public String saveDepartment(@ModelAttribute("newDepartment") com.revworkforce.entity.Department department,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        if (departmentRepository.findByDepartmentName(department.getDepartmentName()).isPresent()) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Department with name '" + department.getDepartmentName() + "' already exists!");
+            return "redirect:/admin/departments";
+        }
+        departmentRepository.save(department);
+        redirectAttributes.addFlashAttribute("success",
+                "Department '" + department.getDepartmentName() + "' registered successfully!");
+        return "redirect:/admin/departments";
+    }
+
+    @GetMapping("/departments/delete/{id}")
+    public String deleteDepartment(@PathVariable("id") Long id,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            departmentRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("success", "Department deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Cannot delete department: This unit is either currently assigned to employees or contains active records.");
+        }
+        return "redirect:/admin/departments";
+    }
 }

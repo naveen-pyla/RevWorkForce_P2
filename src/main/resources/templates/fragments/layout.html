@@ -50,6 +50,10 @@
                         th:classappend="${activeTab == 'add-employee'} ? 'active' : ''">
                         <i class="fas fa-user-plus me-2"></i> Add Employee
                     </a>
+                    <a th:href="@{/admin/departments}" class="nav-link"
+                        th:classappend="${activeTab == 'manage-departments'} ? 'active' : ''">
+                        <i class="fas fa-sitemap me-2"></i> Manage Departments
+                    </a>
                     <a th:href="@{/admin/leave-requests}" class="nav-link"
                         th:classappend="${activeTab == 'manage-leaves'} ? 'active' : ''">
                         <i class="fas fa-calendar-check me-2"></i> System Leave Approvals
