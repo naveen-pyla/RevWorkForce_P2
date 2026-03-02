@@ -1,49 +1,116 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'manage-leaves')}">
 
 <head>
-    <title>Leave Requests</title>
+    <title>Team Approvals | Manager Portal</title>
 </head>
 
 <body>
-    <h1>Pending Leave Requests</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Employee Name</th>
-                <th>Leave Type</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="leave : ${leaves}">
-                <td th:text="${leave.employee.firstName + ' ' + leave.employee.lastName}"></td>
-                <td th:text="${leave.leaveType.leaveName}"></td>
-                <td th:text="${leave.startDate}"></td>
-                <td th:text="${leave.endDate}"></td>
-                <td th:text="${leave.status}"></td>
-                <td>
-                    <form th:action="@{/manager/leave/approve}" method="post" style="display:inline;">
-                        <input type="hidden" name="leaveId" th:value="${leave.leaveId}" />
-                        <button type="submit">Approve</button>
-                    </form>
-                    <form th:action="@{/manager/leave/reject}" method="post" style="display:inline;">
-                        <input type="hidden" name="leaveId" th:value="${leave.leaveId}" />
-                        <input type="text" name="managerComment" placeholder="Reason for rejection" required />
-                        <button type="submit">Reject</button>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(leaves)}">
-                <td colspan="6" style="text-align: center;">No pending leave requests</td>
-            </tr>
-        </tbody>
-    </table>
-    <br>
-    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+    <div th:fragment="content">
+        <div class="mb-4">
+            <h2 class="mb-0">Team Leave Approvals</h2>
+            <p class="text-secondary mb-0">Review and action pending time-off requests from your team members</p>
+        </div>
+
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-outline-light bg-light">
+                            <tr>
+                                <th class="ps-4 py-3">Team Member</th>
+                                <th>Category</th>
+                                <th>Duration</th>
+                                <th>Reason</th>
+                                <th class="pe-4 text-end">Quick Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="leave : ${leaves}">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="stat-icon bg-blue-light text-primary me-3"
+                                            style="width: 40px; height: 40px; font-size: 0.875rem;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <span class="font-bold d-block text-dark"
+                                                th:text="${leave.employee.firstName + ' ' + leave.employee.lastName}">John
+                                                Doe</span>
+                                            <span class="text-xs text-secondary"
+                                                th:text="${leave.employee.department.departmentName}">Engineering</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge bg-light text-dark border border-secondary-subtle px-2 py-1 rounded"
+                                        th:text="${leave.leaveType.leaveName}">Casual</span>
+                                </td>
+                                <td>
+                                    <div class="text-sm">
+                                        <div class="font-bold" th:text="${leave.startDate}">2023-10-01</div>
+                                        <div class="text-secondary text-xs" th:text="${'to ' + leave.endDate}">
+                                            2023-10-05</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-sm text-secondary italic"
+                                        th:text="${#strings.abbreviate(leave.reason, 40)}">"Need time for personal
+                                        errands..."</span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <!-- Approve Action -->
+                                        <form th:action="@{/manager/leave/approve}" method="post" class="m-0">
+                                            <input type="hidden" name="leaveId" th:value="${leave.leaveId}" />
+                                            <button type="submit"
+                                                class="btn btn-sm btn-success rounded-pill px-3 shadow-sm">
+                                                <i class="fas fa-check me-1"></i> Approve
+                                            </button>
+                                        </form>
+
+                                        <!-- Reject with small modal-like interaction (simplified for HTML) -->
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm"
+                                            type="button"
+                                            th:onclick="'document.getElementById(\'reject-box-' + ${leave.leaveId} + '\').classList.toggle(\'d-none\')'">
+                                            <i class="fas fa-times me-1"></i> Reject
+                                        </button>
+                                    </div>
+
+                                    <!-- Hidden Rejection Box -->
+                                    <div th:id="'reject-box-' + ${leave.leaveId}"
+                                        class="d-none mt-2 text-start p-3 bg-light rounded border">
+                                        <form th:action="@{/manager/leave/reject}" method="post">
+                                            <input type="hidden" name="leaveId" th:value="${leave.leaveId}" />
+                                            <label class="text-xs font-bold mb-1">REJECTION REASON:</label>
+                                            <textarea name="managerComment" class="form-control form-control-sm mb-2"
+                                                rows="2" placeholder="Required for rejection..." required></textarea>
+                                            <div class="d-flex gap-1 justify-content-end">
+                                                <button type="button" class="btn btn-xs btn-light px-2"
+                                                    th:onclick="'document.getElementById(\'reject-box-' + ${leave.leaveId} + '\').classList.add(\'d-none\')'">Cancel</button>
+                                                <button type="submit"
+                                                    class="btn btn-xs btn-danger px-3 font-bold">Confirm Reject</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(leaves)}">
+                                <td colspan="5" class="text-center py-5 text-secondary bg-white">
+                                    <div class="opacity-50">
+                                        <i class="fas fa-clipboard-check fs-1 mb-3"></i>
+                                        <p class="mb-0">Workspace Clear! No pending leaves to review.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

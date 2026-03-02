@@ -1,45 +1,148 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'profile')}">
 
 <head>
-    <title>My Profile</title>
+    <title>Manager Profile | Hub Portal</title>
 </head>
 
 <body>
-    <h2>Manager Profile</h2>
+    <div th:fragment="content">
+        <div class="row g-4">
+            <!-- Left Column: Primary Identity -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden rounded-4">
+                    <div class="card-header bg-dark py-5 text-center position-relative">
+                        <div class="stat-icon bg-white text-dark mx-auto mb-3 shadow"
+                            style="width: 100px; height: 100px; font-size: 3rem;">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h4 class="text-white fw-bold mb-1" th:text="${employee.firstName + ' ' + employee.lastName}">
+                            Jane Manager</h4>
+                        <p class="text-white-50 mb-0 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-id-badge me-2"></i>
+                            <span th:text="${employee.designation}">Senior Management</span>
+                        </p>
+                    </div>
+                    <div class="card-body p-4">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0 py-3 bg-transparent border-bottom">
+                                <span class="d-block text-xs font-bold text-uppercase text-secondary mb-1">OFFICIAL
+                                    EMAIL</span>
+                                <span class="font-bold text-dark"
+                                    th:text="${employee.user.email}">jane.m@revworkforce.com</span>
+                            </li>
+                            <li class="list-group-item px-0 py-3 bg-transparent border-bottom">
+                                <span
+                                    class="d-block text-xs font-bold text-uppercase text-secondary mb-1">DEPARTMENT</span>
+                                <span class="badge bg-light text-dark border border-secondary-subtle px-3 py-2"
+                                    th:text="${employee.department != null ? employee.department.departmentName : 'Unassigned'}">Operations</span>
+                            </li>
+                            <li class="list-group-item px-0 py-3 bg-transparent">
+                                <span class="d-block text-xs font-bold text-uppercase text-secondary mb-1">JOINING
+                                    DATE</span>
+                                <span class="font-bold text-dark"
+                                    th:text="${#temporals.format(employee.joiningDate, 'MMMM dd, yyyy')}">June 10,
+                                    2020</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-    <p><strong>First Name:</strong> <span th:text="${employee.firstName}"></span></p>
-    <p><strong>Last Name:</strong> <span th:text="${employee.lastName}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${employee.user.email}"></span></p>
-    <p><strong>Role:</strong> <span th:text="${employee.user.role}"></span></p>
-    <p><strong>Department:</strong> <span
-            th:text="${employee.department != null ? employee.department.departmentName : 'N/A'}"></span></p>
-    <p><strong>Designation:</strong> <span th:text="${employee.designation}"></span></p>
-    <p><strong>Joining Date:</strong> <span th:text="${employee.joiningDate}"></span></p>
-    <p><strong>Status:</strong> <span th:text="${employee.status}"></span></p>
+                <!-- Manager Info Card (for Managers who report to others) -->
+                <div th:if="${employee.manager != null}" class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-light">
+                    <h6 class="font-bold text-secondary text-uppercase mb-3"><i class="fas fa-sitemap me-2"></i> Direct
+                        Report To</h6>
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-white text-primary me-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold d-block text-dark"
+                                th:text="${employee.manager.firstName + ' ' + employee.manager.lastName}">Director
+                                Name</span>
+                            <span class="text-xs text-secondary italic"
+                                th:text="${employee.manager.user.email}">director.n@revworkforce.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div th:if="${employee.manager != null}">
-        <h3>Manager Info</h3>
-        <p><strong>Manager Name:</strong> <span
-                th:text="${employee.manager.firstName + ' ' + employee.manager.lastName}"></span></p>
-        <p><strong>Manager Email:</strong> <span th:text="${employee.manager.user.email}"></span></p>
+            <!-- Right Column: Professional Details & Edits -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white py-4 border-bottom px-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 font-bold"><i class="fas fa-user-edit text-primary me-2"></i> Identity &
+                                Personal Information</h5>
+                            <span class="badge bg-success-subtle text-success border px-3 py-2 rounded-pill font-bold">
+                                <i class="fas fa-check-circle me-1"></i> ACCOUNT <span
+                                    th:text="${employee.status}">ACTIVE</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <form th:action="@{/manager/profile/update}" method="post">
+                            <div class="row g-4 mb-5">
+                                <div class="col-md-6 text-md-start">
+                                    <div class="p-3 bg-light rounded-3 h-100">
+                                        <label
+                                            class="form-label font-bold text-sm text-secondary text-uppercase mb-2">Registration
+                                            ID</label>
+                                        <div class="h5 font-bold mb-0 text-dark opacity-75">MGR-[[${employee.empId}]]
+                                        </div>
+                                        <span class="text-xs text-secondary italic">System identified profile</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-md-start">
+                                    <div class="p-3 bg-light rounded-3 h-100">
+                                        <label
+                                            class="form-label font-bold text-sm text-secondary text-uppercase mb-2">Account
+                                            Role</label>
+                                        <div class="h5 font-bold mb-0 text-dark opacity-75"
+                                            th:text="${employee.user.role}">MANAGER</div>
+                                        <span class="text-xs text-secondary italic">High access permissions</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label font-bold text-sm text-secondary text-uppercase"><i
+                                        class="fas fa-phone me-2"></i> Business Contact Number</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white border-end-0 text-secondary"><i
+                                            class="fas fa-mobile-alt"></i></span>
+                                    <input type="text" name="phone" class="form-control border-start-0 py-2"
+                                        th:value="${employee.phone}" placeholder="+1 234 567 890" required />
+                                </div>
+                            </div>
+
+                            <div class="mb-5">
+                                <label class="form-label font-bold text-sm text-secondary text-uppercase"><i
+                                        class="fas fa-map-marker-alt me-2"></i> Residential Address</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white border-end-0 text-secondary"><i
+                                            class="fas fa-home"></i></span>
+                                    <textarea name="address" class="form-control border-start-0" rows="3" required
+                                        placeholder="Street, City, Zip Code..."
+                                        th:text="${employee.address}"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-top">
+                                <button type="submit" class="btn btn-dark px-5 py-3 shadow font-bold text-uppercase">
+                                    <i class="fas fa-save me-2 text-warning"></i> Confirm Profile Sync
+                                </button>
+                                <a th:href="@{/manager/dashboard}"
+                                    class="btn btn-link text-secondary text-decoration-none ms-3">Return to
+                                    Dashboard</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <h3>Update Profile</h3>
-    <form th:action="@{/manager/profile/update}" method="post">
-        <label>Contact Number:</label>
-        <input type="text" name="phone" th:value="${employee.phone}" required />
-        <br><br>
-
-        <label>Address:</label>
-        <textarea name="address" required th:text="${employee.address}"></textarea>
-        <br><br>
-
-        <button type="submit">Update Profile</button>
-    </form>
-
-    <br>
-    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
 </body>
 
 </html>

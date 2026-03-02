@@ -1,48 +1,94 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'assign-goal')}">
 
 <head>
-    <title>Assign Goal</title>
+    <title>Assign Team Goals | Manager Portal</title>
 </head>
 
 <body>
-    <h2>Assign Goal to Employee</h2>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg overflow-hidden">
+                    <div class="card-header bg-primary py-4 text-center">
+                        <div class="stat-icon bg-white text-primary mx-auto mb-2"
+                            style="width: 50px; height: 50px; font-size: 1.5rem;">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3 class="text-white fw-bold mb-0">Set Strategic Objectives</h3>
+                        <p class="text-white-50 mb-0">Assign measurable goals to your team members.</p>
+                    </div>
 
-    <form th:action="@{/manager/assign-goal}" th:object="${goal}" method="post">
+                    <div class="card-body p-5">
+                        <form th:action="@{/manager/assign-goal}" th:object="${goal}" method="post">
+                            <div class="mb-4">
+                                <label class="form-label font-bold text-sm text-uppercase">Team Member Selection</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white text-primary border-end-0"><i
+                                            class="fas fa-user-check"></i></span>
+                                    <select name="employeeId" class="form-select border-start-0 bg-light-subtle py-2"
+                                        required>
+                                        <option value="">-- Choose an individual --</option>
+                                        <option th:each="emp : ${employees}" th:value="${emp.empId}"
+                                            th:text="${emp.firstName + ' ' + emp.lastName + ' (' + emp.designation + ')'}"
+                                            th:selected="${emp.empId == employeeId}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Select Employee:</label>
-            <select name="employeeId" class="form-select" required>
-                <option value="">-- Select an Employee --</option>
-                <option th:each="emp : ${employees}" th:value="${emp.empId}"
-                    th:text="${emp.firstName + ' ' + emp.lastName}" th:selected="${emp.empId == employeeId}">
-                </option>
-            </select>
+                            <div class="mb-4">
+                                <label class="form-label font-bold text-sm text-uppercase">Goal Title</label>
+                                <input type="text" class="form-control bg-light-subtle py-2" th:field="*{title}"
+                                    placeholder="e.g., Q3 Project Completion, Sales Target..." />
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('title')}"
+                                    th:errors="*{title}"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label font-bold text-sm text-uppercase">Execution Details</label>
+                                <textarea class="form-control bg-light-subtle" th:field="*{description}" rows="4"
+                                    placeholder="Detail the expectations, metrics, and key results..."></textarea>
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('description')}"
+                                    th:errors="*{description}"></div>
+                            </div>
+
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm text-uppercase">Deadline</label>
+                                    <div class="input-group shadow-sm">
+                                        <span class="input-group-text bg-white text-secondary border-end-0"><i
+                                                class="far fa-calendar-alt"></i></span>
+                                        <input type="date" class="form-control border-start-0 bg-light-subtle"
+                                            th:field="*{dueDate}" />
+                                    </div>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('dueDate')}"
+                                        th:errors="*{dueDate}"></div>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <div class="card bg-info-subtle border-0 p-3 w-100 mt-md-0 mt-3 rounded-3">
+                                        <div class="text-xs font-bold text-info text-uppercase mb-1">PRO TIP</div>
+                                        <div class="text-xs text-info-emphasis">S.M.A.R.T goals are specific,
+                                            measurable, relevant, and time-bound.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit"
+                                    class="btn btn-primary btn-lg shadow py-3 font-bold text-uppercase">
+                                    <i class="fas fa-plus-circle me-2"></i> Launch Objective
+                                </button>
+                                <a th:href="@{/manager/dashboard}"
+                                    class="btn btn-link text-secondary text-decoration-none">Cancel and Return</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Title:</label>
-            <input type="text" class="form-control" th:field="*{title}" />
-            <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Description:</label>
-            <textarea class="form-control" th:field="*{description}" placeholder="Details about this goal"></textarea>
-            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Due Date:</label>
-            <input type="date" class="form-control" th:field="*{dueDate}" />
-            <div class="text-danger" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}"></div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Assign New Goal</button>
-    </form>
-
-    <br>
-    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+    </div>
 </body>
 
 </html>

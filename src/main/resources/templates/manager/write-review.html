@@ -1,51 +1,95 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'write-review')}">
 
 <head>
-    <title>Write Performance Review</title>
+    <title>Write Performance Review | Manager Portal</title>
 </head>
 
 <body>
-    <h2>Write Performance Review</h2>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg p-0 bg-transparent">
+                    <div class="card bg-white border-0 overflow-hidden rounded-4">
+                        <div class="card-header bg-dark py-4 text-center">
+                            <div class="stat-icon bg-warning text-dark mx-auto mb-2"
+                                style="width: 50px; height: 50px; font-size: 1.5rem;">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <h3 class="text-white fw-bold mb-0">Annual Performance Appraisal</h3>
+                            <p class="text-white-50 mb-0">Provide detailed feedback and ratings for your team members.
+                            </p>
+                        </div>
 
-    <p style="color:red;" th:if="${error}" th:text="${error}"></p>
+                        <div class="card-body p-5">
+                            <form th:action="@{/manager/write-review}" th:object="${review}" method="post">
+                                <div class="mb-5 p-4 bg-light rounded-4 border border-light-dark">
+                                    <label
+                                        class="form-label font-bold text-sm text-uppercase text-secondary mb-3 d-block"><i
+                                            class="fas fa-user-tie me-2"></i> TEAM MEMBER DETAILS</label>
+                                    <select name="employeeId"
+                                        class="form-select border-0 shadow-sm py-3 px-4 font-bold text-dark"
+                                        style="background-color: white;" required>
+                                        <option value="">-- Click to select an employee --</option>
+                                        <option th:each="emp : ${employees}" th:value="${emp.empId}"
+                                            th:text="${emp.firstName + ' ' + emp.lastName + ' (' + emp.department.departmentName + ')'}"
+                                            th:selected="${emp.empId == employeeId}">
+                                        </option>
+                                    </select>
+                                </div>
 
-    <form th:action="@{/manager/write-review}" th:object="${review}" method="post">
+                                <div class="row g-4 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label font-bold text-sm text-secondary text-uppercase"><i
+                                                class="fas fa-calendar-alt me-2"></i> Review Year</label>
+                                        <input type="number"
+                                            class="form-control bg-light-subtle py-2 border-0 shadow-sm"
+                                            th:field="*{year}" th:value="${#dates.year(#dates.createNow())}" />
+                                        <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('year')}"
+                                            th:errors="*{year}"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label font-bold text-sm text-secondary text-uppercase"><i
+                                                class="fas fa-star me-2"></i> Performance Rating (1-5)</label>
+                                        <div class="input-group shadow-sm border-0">
+                                            <input type="number" min="1" max="5"
+                                                class="form-control bg-light-subtle py-2 border-0" th:field="*{rating}"
+                                                placeholder="Enter 1 to 5" />
+                                            <span class="input-group-text bg-white border-0 text-warning"><i
+                                                    class="fas fa-medal"></i></span>
+                                        </div>
+                                        <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('rating')}"
+                                            th:errors="*{rating}"></div>
+                                    </div>
+                                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Select Employee:</label>
-            <select name="employeeId" class="form-select" required>
-                <option value="">-- Select an Employee --</option>
-                <option th:each="emp : ${employees}" th:value="${emp.empId}"
-                    th:text="${emp.firstName + ' ' + emp.lastName}" th:selected="${emp.empId == employeeId}">
-                </option>
-            </select>
+                                <div class="mb-5">
+                                    <label class="form-label font-bold text-sm text-secondary text-uppercase"><i
+                                            class="fas fa-comment-alt me-2"></i> Manager's Detailed Assessment</label>
+                                    <textarea class="form-control bg-light-subtle border-0 shadow-sm"
+                                        th:field="*{comments}" rows="6"
+                                        placeholder="Provide qualitative feedback on core competencies, achievements, and roadmap for improvement..."></textarea>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('comments')}"
+                                        th:errors="*{comments}"></div>
+                                </div>
+
+                                <div class="d-grid gap-3">
+                                    <button type="submit"
+                                        class="btn btn-dark btn-lg shadow py-3 font-bold text-uppercase">
+                                        <i class="fas fa-file-export me-2 text-warning"></i> finalize and publish Review
+                                    </button>
+                                    <a th:href="@{/manager/dashboard}"
+                                        class="btn btn-link text-secondary text-decoration-none text-center">Return to
+                                        Management Dashboard</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">Review Year:</label>
-            <input type="number" class="form-control" th:field="*{year}" />
-            <div class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Rating (1-5):</label>
-            <input type="number" class="form-control" th:field="*{rating}" />
-            <div class="text-danger" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Manager Comments:</label>
-            <textarea class="form-control" th:field="*{comments}" rows="4"
-                placeholder="How was the employee's performance?"></textarea>
-            <div class="text-danger" th:if="${#fields.hasErrors('comments')}" th:errors="*{comments}"></div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit Performance Review</button>
-    </form>
-
-    <br>
-    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+    </div>
 </body>
 
 </html>

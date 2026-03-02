@@ -1,30 +1,75 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'announcements')}">
 
 <head>
-    <title>Create Announcement</title>
+    <title>Global Broadcast Publisher | Admin Portal</title>
 </head>
 
 <body>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header bg-dark py-5 text-center shadow-lg">
+                        <div class="stat-icon bg-warning text-dark mx-auto mb-3 shadow"
+                            style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            <i class="fas fa-bullhorn rotate-n-15"></i>
+                        </div>
+                        <h3 class="text-white fw-bold mb-0">Broadcast Center</h3>
+                        <p class="text-white-50 mb-0">Publish important news and official organization bulletins.</p>
+                    </div>
 
-    <h2>Create Announcement</h2>
+                    <div class="card-body p-5">
+                        <form th:action="@{/admin/announcements/save}" th:object="${announcement}" method="post">
+                            <div class="mb-4">
+                                <label
+                                    class="form-label font-bold text-xs text-uppercase text-secondary tracking-widest mb-3"><i
+                                        class="fas fa-heading me-1"></i> Bulletin Header / Title</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white border-end-0 text-dark"><i
+                                            class="fas fa-pen-nib"></i></span>
+                                    <input type="text" th:field="*{title}"
+                                        class="form-control border-start-0 py-3 font-bold text-dark bg-light-subtle"
+                                        placeholder="e.g. Q4 Townhall Meeting Schedule..." required />
+                                </div>
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('title')}"
+                                    th:errors="*{title}"></div>
+                            </div>
 
-    <form th:action="@{/admin/announcements/save}" th:object="${announcement}" method="post">
+                            <div class="mb-5">
+                                <label
+                                    class="form-label font-bold text-xs text-uppercase text-secondary tracking-widest mb-3"><i
+                                        class="fas fa-paragraph me-1"></i> Broadcast Message Content</label>
+                                <textarea th:field="*{message}"
+                                    class="form-control bg-light-subtle shadow-sm p-4 text-dark" rows="8"
+                                    placeholder="Enter the full text of your company-wide update..."
+                                    required></textarea>
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('message')}"
+                                    th:errors="*{message}"></div>
+                            </div>
 
-        <label>Title:</label>
-        <input type="text" th:field="*{title}" required />
+                            <div
+                                class="card bg-info-subtle border-0 p-3 mb-5 rounded-3 d-flex flex-row align-items-center">
+                                <i class="fas fa-shield-alt text-info-emphasis fs-4 me-3"></i>
+                                <p class="text-xs text-info-emphasis mb-0 font-bold italic">This announcement will be
+                                    published instantly to all employees and managers' dashboards.</p>
+                            </div>
 
-        <br><br>
-
-        <label>Message:</label>
-        <textarea th:field="*{message}" required></textarea>
-
-        <br><br>
-
-        <button type="submit">Save</button>
-    </form>
-    <br><br>
-    <a th:href="@{/admin/announcements}">Back to Announcements</a>
+                            <div class="d-grid gap-3">
+                                <button type="submit" class="btn btn-dark btn-lg shadow py-3 font-bold text-uppercase">
+                                    <i class="fas fa-paper-plane me-2 text-warning"></i> Push Broadcast to Workforce
+                                </button>
+                                <a th:href="@{/admin/announcements}"
+                                    class="btn btn-link text-secondary text-decoration-none text-center">Discard and
+                                    Back to Newsroom</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

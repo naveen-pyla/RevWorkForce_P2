@@ -1,18 +1,88 @@
-<table border="1">
-    <tr>
-        <th>Type</th>
-        <th>From</th>
-        <th>To</th>
-        <th>Status</th>
-    </tr>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'my-leaves')}">
 
-    <tr th:each="l : ${leaves}">
-        <td th:text="${l.leaveType.leaveName}"></td>
-        <td th:text="${l.startDate}"></td>
-        <td th:text="${l.endDate}"></td>
-        <td th:text="${l.status}"></td>
-    </tr>
-</table>
+<head>
+    <title>My Leave History | RevWorkforce</title>
+</head>
 
-<br><br>
-<a th:href="@{/employee/dashboard}">Back to Dashboard</a>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-0">My Leave History</h2>
+                <p class="text-secondary mb-0">Track your past and pending time-off requests</p>
+            </div>
+            <a th:href="@{/employee/apply-leave}" class="btn btn-primary shadow-sm">
+                <i class="fas fa-plus me-2"></i> Request New Leave
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Leave Category</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th class="pe-4 text-end">Applied Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="l : ${leaves}">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="stat-icon bg-light text-primary me-3"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </div>
+                                        <div>
+                                            <span class="font-bold d-block" th:text="${l.leaveType.leaveName}">Casual
+                                                Leave</span>
+                                            <span class="text-xs text-secondary" th:text="${l.reason}">Family
+                                                occasion...</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="font-bold text-dark" th:text="${l.startDate}">2023-10-01</span>
+                                    <i class="fas fa-long-arrow-alt-right mx-2 text-secondary"></i>
+                                    <span class="font-bold text-dark" th:text="${l.endDate}">2023-10-05</span>
+                                </td>
+                                <td>
+                                    <span th:if="${l.status == 'PENDING'}"
+                                        class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 rounded-pill font-bold">
+                                        <i class="fas fa-clock me-1"></i> PENDING
+                                    </span>
+                                    <span th:if="${l.status == 'APPROVED'}"
+                                        class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill font-bold">
+                                        <i class="fas fa-check-circle me-1"></i> APPROVED
+                                    </span>
+                                    <span th:if="${l.status == 'REJECTED'}"
+                                        class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill font-bold">
+                                        <i class="fas fa-times-circle me-1"></i> REJECTED
+                                    </span>
+                                </td>
+                                <td class="pe-4 text-end text-secondary text-sm">
+                                    <span
+                                        th:text="${l.appliedOn != null ? #temporals.format(l.appliedOn, 'MMM dd, yyyy') : 'N/A'}">Oct
+                                        01, 2023</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(leaves)}">
+                                <td colspan="4" class="text-center py-5 text-secondary">
+                                    <i class="fas fa-history mb-3 fs-1 d-block opacity-25"></i>
+                                    No leave history found.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

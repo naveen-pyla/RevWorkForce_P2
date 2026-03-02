@@ -1,29 +1,70 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'announcements')}">
 
 <head>
-    <title>Announcements</title>
+    <title>Organization Bulletins | Manager Portal</title>
 </head>
 
 <body>
+    <div th:fragment="content">
+        <div class="mb-5 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1 fw-bold text-dark">Management Strategic Bulletins</h2>
+                <p class="text-secondary mb-0">Stay informed with official updates from the organization.</p>
+            </div>
+            <div class="stat-icon bg-blue-light text-primary shadow-sm" style="width: 50px; height: 50px;">
+                <i class="fas fa-bullhorn rotate-n-15"></i>
+            </div>
+        </div>
 
-    <h2>Company Announcements</h2>
+        <div class="row g-4">
+            <div th:each="a : ${announcements}" class="col-lg-6 col-xl-4">
+                <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-white hover-up transition-all">
+                    <div class="card-header bg-white pt-4 pb-0 border-0 px-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span
+                                class="badge bg-light text-primary-emphasis border border-primary-subtle px-3 py-1 rounded-pill text-xs font-bold tracking-widest text-uppercase">OFFICIAL</span>
+                            <span class="text-xs text-secondary opacity-75 fw-bold"
+                                th:text="${#temporals.format(a.createdAt, 'MMM dd, yyyy')}">Oct 20, 2023</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-0 pe-4" th:text="${a.title}">Announcement Title</h5>
+                    </div>
 
-    <table border="1">
-        <tr>
-            <th>Title</th>
-            <th>Message</th>
-            <th>Created At</th>
-        </tr>
+                    <div class="card-body px-4 pt-3 pb-4">
+                        <p class="text-secondary text-sm mb-4"
+                            style="line-height: 1.6; min-height: 100px; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden;"
+                            th:text="${a.message}">
+                            Detailed announcement message implementation here...
+                        </p>
 
-        <tr th:each="a : ${announcements}">
-            <td th:text="${a.title}"></td>
-            <td th:text="${a.message}"></td>
-            <td th:text="${a.createdAt}"></td>
-        </tr>
-    </table>
-    <br><br>
-    <a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+                        <div class="pt-3 border-top border-light d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary text-white text-xs font-bold rounded-circle d-flex align-items-center justify-content-center me-2 shadow-sm"
+                                    style="width: 24px; height: 24px;">
+                                    <span th:text="${#strings.substring(a.createdBy.firstName, 0, 1)}">A</span>
+                                </div>
+                                <span class="text-xs font-bold text-secondary">Publisher:
+                                    [[${a.createdBy.firstName}]]</span>
+                            </div>
+                            <span class="text-xs text-primary-emphasis opacity-50"><i class="fas fa-eye me-1"></i>
+                                Public Bulletin</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(announcements)}" class="text-center py-5 bg-white shadow-sm rounded-4 mt-4">
+            <div class="mb-4 opacity-10">
+                <i class="fas fa-satellite fs-1" style="font-size: 5rem;"></i>
+            </div>
+            <h5 class="font-bold text-dark mb-2">No active broadcasts</h5>
+            <p class="text-secondary mb-0 mx-auto" style="max-width: 350px;">The bulletins board is currently empty.
+                Check back for official company broadcasts.</p>
+        </div>
+    </div>
 </body>
 
 </html>

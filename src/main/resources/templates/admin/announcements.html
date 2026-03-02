@@ -1,43 +1,74 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'announcements')}">
 
 <head>
-    <title>Announcements</title>
+    <title>Company Newsroom | Administrator Control</title>
 </head>
 
 <body>
+    <div th:fragment="content">
+        <div class="mb-5 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1 fw-bold text-dark">Company Global Announcements</h2>
+                <p class="text-secondary mb-0">Manage and publish organization-wide news and updates.</p>
+            </div>
+            <a th:href="@{/admin/announcements/create}" class="btn btn-dark shadow-sm px-4 py-2 font-bold rounded-pill">
+                <i class="fas fa-plus-circle me-2 text-warning"></i> BROADCAST NEW UPDATE
+            </a>
+        </div>
 
-    <h2>Announcements</h2>
+        <div class="row g-4">
+            <div th:each="a : ${announcements}" class="col-lg-6 col-xl-4">
+                <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden card-hover">
+                    <div class="card-header bg-white pt-4 pb-0 border-0 px-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="stat-icon bg-warning text-dark shadow-sm"
+                                style="width: 44px; height: 44px; font-size: 1.15rem;">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-light text-secondary border px-2 py-1 rounded text-xs"
+                                    th:text="${#temporals.format(a.createdAt, 'MMM dd, yyyy')}">Oct 20, 2023</span>
+                                <div class="text-xs text-secondary mt-1 italic">Published by
+                                    [[${a.createdBy.firstName}]]</div>
+                            </div>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3 pe-4" th:text="${a.title}">Announcement Title</h5>
+                    </div>
 
-    <a th:href="@{/admin/announcements/create}">
-        Create New Announcement
-    </a>
+                    <div class="card-body px-4 pt-1 pb-4">
+                        <p class="text-secondary text-sm mb-4"
+                            style="line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;"
+                            th:text="${a.message}">
+                            Detailed announcement message implementation here...
+                        </p>
 
-    <br><br>
+                        <div
+                            class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-light">
+                            <span class="text-xs font-bold text-uppercase text-secondary tracking-widest">SYSTEM
+                                BROADCAST</span>
+                            <a th:href="@{/admin/announcements/delete/{id}(id=${a.announcementId})}"
+                                class="text-danger-emphasis text-decoration-none font-bold text-xs hover-bg-danger-light px-2 py-1 rounded transition-all"
+                                onclick="return confirm('Archive this announcement forever?')">
+                                <i class="fas fa-trash-alt me-1"></i> ARCHIVE
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <table border="1">
-        <tr>
-            <th>Title</th>
-            <th>Message</th>
-            <th>Created By</th>
-            <th>Created At</th>
-            <th>Action</th>
-        </tr>
-
-        <tr th:each="a : ${announcements}">
-            <td th:text="${a.title}"></td>
-            <td th:text="${a.message}"></td>
-            <td th:text="${a.createdBy.firstName} + ' ' + ${a.createdBy.lastName}"></td>
-            <td th:text="${a.createdAt}"></td>
-            <td>
-                <a th:href="@{/admin/announcements/delete/{id}(id=${a.announcementId})}">
-                    Delete
-                </a>
-            </td>
-        </tr>
-    </table>
-    <br><br>
-    <a th:href="@{/admin/dashboard}">Back to Dashboard</a>
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(announcements)}" class="text-center py-5 bg-white shadow-sm rounded-4 mt-4">
+            <div class="mb-4 opacity-10">
+                <i class="fas fa-newspaper" style="font-size: 5rem;"></i>
+            </div>
+            <h5 class="font-bold text-dark mb-2">Newsroom Quiet</h5>
+            <p class="text-secondary mb-0 mx-auto" style="max-width: 350px;">There are no active global announcements.
+                Start by broadcasting an update to the entire organization.</p>
+        </div>
+    </div>
 </body>
 
 </html>

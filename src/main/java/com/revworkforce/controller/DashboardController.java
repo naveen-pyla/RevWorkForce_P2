@@ -5,8 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.revworkforce.repository.EventRepository;
-import com.revworkforce.repository.NotificationRepository;
-import com.revworkforce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 
@@ -16,8 +14,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    private final UserRepository userRepository;
-    private final NotificationRepository notificationRepository;
     private final EventRepository eventRepository;
 
     @GetMapping("/login")
@@ -40,30 +36,24 @@ public class DashboardController {
     }
 
     @GetMapping("/admin/dashboard")
-    public String adminDashboard(Model model, Authentication auth) {
-        addUnreadCount(model, auth);
+    public String adminDashboard(Model model) {
+        addCommonDashboardData(model);
         return "admin/dashboard";
     }
 
     @GetMapping("/manager/dashboard")
-    public String managerDashboard(Model model, Authentication auth) {
-        addUnreadCount(model, auth);
+    public String managerDashboard(Model model) {
+        addCommonDashboardData(model);
         return "manager/dashboard";
     }
 
     @GetMapping("/employee/dashboard")
-    public String employeeDashboard(Model model, Authentication auth) {
-        addUnreadCount(model, auth);
+    public String employeeDashboard(Model model) {
+        addCommonDashboardData(model);
         return "employee/dashboard";
     }
 
-    private void addUnreadCount(Model model, Authentication auth) {
-        if (auth != null && auth.isAuthenticated()) {
-            userRepository.findByEmail(auth.getName()).ifPresent(user -> {
-                long unreadCount = notificationRepository.countByUserAndIsReadFalse(user);
-                model.addAttribute("unreadCount", unreadCount);
-            });
-        }
+    private void addCommonDashboardData(Model model) {
         model.addAttribute("upcomingEvents",
                 eventRepository.findByEventDateGreaterThanEqualOrderByEventDateAsc(LocalDate.now()));
     }

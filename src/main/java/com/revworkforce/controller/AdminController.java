@@ -92,7 +92,7 @@ public class AdminController {
         return "admin/assign-manager";
     }
 
-    @PostMapping("/employees/update-manager")
+    @PostMapping("/manager/update")
     public String updateManager(@RequestParam("empId") Long empId,
             @RequestParam("managerId") Long managerId) {
 

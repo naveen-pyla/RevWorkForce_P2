@@ -1,35 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'employee-list')}">
 
 <head>
-    <title>Assign / Update Manager</title>
+    <title>Organizational Alignment | Admin Portal</title>
 </head>
 
 <body>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card border-0 shadow-lg p-0 bg-transparent">
+                    <div class="card bg-white border-0 overflow-hidden rounded-4">
+                        <div class="card-header bg-dark py-4 text-center">
+                            <div class="stat-icon bg-warning text-dark mx-auto mb-2"
+                                style="width: 50px; height: 50px; font-size: 1.5rem;">
+                                <i class="fas fa-network-wired"></i>
+                            </div>
+                            <h3 class="text-white fw-bold mb-0">Reporting Strategy</h3>
+                            <p class="text-white-50 mb-0">Define the organizational hierarchy for your workforce.</p>
+                        </div>
 
-    <h2>Assign / Update Manager</h2>
+                        <div class="card-body p-5">
+                            <div class="mb-5 p-4 bg-light rounded-4 border-start border-4 border-warning">
+                                <label
+                                    class="form-label font-bold text-xs text-uppercase text-secondary mb-2 d-block">ACTIVE
+                                    SUBJECT</label>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center me-3"
+                                        style="width: 48px; height: 48px;">
+                                        <i class="fas fa-user text-dark opacity-50"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold mb-0 text-dark"
+                                            th:text="${employee.firstName + ' ' + employee.lastName}">Employee Name</h5>
+                                        <span class="text-xs text-secondary italic">ID: EMP-[[${employee.empId}]] -
+                                            [[${employee.designation}]]</span>
+                                    </div>
+                                </div>
+                            </div>
 
-    <p>
-        Employee:
-        <b th:text="${employee.firstName} + ' ' + ${employee.lastName}"></b>
-    </p>
+                            <form th:action="@{/admin/manager/update}" method="post">
+                                <input type="hidden" name="empId" th:value="${employee.empId}" />
 
-    <form th:action="@{/admin/manager/update}" method="post">
+                                <div class="mb-4">
+                                    <label class="form-label font-bold text-sm text-secondary text-uppercase mb-3"><i
+                                            class="fas fa-user-tie me-2"></i> SELECT NEW REPORTING AUTHORITY</label>
+                                    <div class="input-group shadow-sm">
+                                        <span class="input-group-text bg-white border-end-0 text-dark"><i
+                                                class="fas fa-sitemap"></i></span>
+                                        <select name="managerId"
+                                            class="form-select border-start-0 py-3 px-3 font-bold text-dark bg-light-subtle"
+                                            required>
+                                            <option value="">-- Click to assign a manager --</option>
+                                            <option th:each="mgr : ${managers}" th:value="${mgr.empId}"
+                                                th:text="${mgr.firstName + ' ' + mgr.lastName + ' (' + mgr.department.departmentName + ')'}"
+                                                th:selected="${employee.manager != null && mgr.empId == employee.manager.empId}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <p class="text-xs text-secondary mt-3 italic"><i
+                                            class="fas fa-info-circle me-1"></i> Managers can view, approve leave, and
+                                        write reviews for their direct reports.</p>
+                                </div>
 
-        <input type="hidden" name="empId" th:value="${employee.empId}" />
-
-        <label>Select Manager:</label>
-        <select name="managerId" required>
-            <option th:each="mgr : ${managers}" th:value="${mgr.empId}"
-                th:text="${mgr.firstName} + ' ' + ${mgr.lastName}">
-            </option>
-        </select>
-
-        <br><br>
-        <button type="submit">Save</button>
-    </form>
-    <br><br>
-    <a th:href="@{/admin/employees}">Back to Employee List</a>
+                                <div class="d-grid gap-3 pt-4">
+                                    <button type="submit"
+                                        class="btn btn-dark btn-lg shadow py-3 font-bold text-uppercase">
+                                        <i class="fas fa-sync-alt me-2 text-warning"></i> Apply Hierarchy Change
+                                    </button>
+                                    <a th:href="@{/admin/employees}"
+                                        class="btn btn-link text-secondary text-decoration-none text-center">Cancel and
+                                        Return to Directory</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

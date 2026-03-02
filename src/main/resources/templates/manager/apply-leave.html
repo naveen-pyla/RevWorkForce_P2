@@ -1,34 +1,83 @@
-<form th:action="@{/manager/apply-leave}" th:object="${leaveApplication}" method="post">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'apply-leave')}">
 
-    <div class="mb-3">
-        <label class="form-label">Leave Type:</label>
-        <select class="form-select" th:field="*{leaveType}">
-            <option th:each="type : ${leaveTypes}" th:value="${type.leaveTypeId}" th:text="${type.leaveName}">
-            </option>
-        </select>
-        <div class="text-danger" th:if="${#fields.hasErrors('leaveType')}" th:errors="*{leaveType}"></div>
+<head>
+    <title>Request Leave | Manager Portal</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card mb-4 border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-5">
+                            <div class="stat-icon bg-primary text-white mx-auto mb-3"
+                                style="width: 64px; height: 64px; font-size: 2rem;">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <h2 class="font-bold">Request Time Off</h2>
+                            <p class="text-secondary">Submit your personal leave request for administrative approval.
+                            </p>
+                        </div>
+
+                        <form th:action="@{/manager/apply-leave}" th:object="${leaveApplication}" method="post">
+                            <div class="mb-4">
+                                <label class="form-label font-bold text-sm">Leave Category</label>
+                                <select class="form-select border-start-0 bg-light-subtle" th:field="*{leaveType}">
+                                    <option value="">-- Select Leave Type --</option>
+                                    <option th:each="type : ${leaveTypes}" th:value="${type.leaveTypeId}"
+                                        th:text="${type.leaveName}"></option>
+                                </select>
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('leaveType')}"
+                                    th:errors="*{leaveType}"></div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Start Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 text-secondary"><i
+                                                class="fas fa-calendar-alt"></i></span>
+                                        <input type="date" class="form-control border-start-0 bg-light-subtle"
+                                            th:field="*{startDate}" />
+                                    </div>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('startDate')}"
+                                        th:errors="*{startDate}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">End Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 text-secondary"><i
+                                                class="fas fa-calendar-day"></i></span>
+                                        <input type="date" class="form-control border-start-0 bg-light-subtle"
+                                            th:field="*{endDate}" />
+                                    </div>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('endDate')}"
+                                        th:errors="*{endDate}"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label font-bold text-sm">Reason for Absence</label>
+                                <textarea class="form-control bg-light-subtle" th:field="*{reason}" rows="3"
+                                    placeholder="Briefly describe the reason for your absence..."></textarea>
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('reason')}"
+                                    th:errors="*{reason}"></div>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm py-3 font-bold">
+                                    <i class="fas fa-paper-plane me-2"></i> Confirm Application
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</body>
 
-    <div class="mb-3">
-        <label class="form-label">Start Date:</label>
-        <input type="date" class="form-control" th:field="*{startDate}" />
-        <div class="text-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">End Date:</label>
-        <input type="date" class="form-control" th:field="*{endDate}" />
-        <div class="text-danger" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Reason:</label>
-        <textarea class="form-control" th:field="*{reason}" placeholder="Why do you need leave?"></textarea>
-        <div class="text-danger" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></div>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit Application</button>
-</form>
-
-<br><br>
-<a th:href="@{/manager/dashboard}">Back to Dashboard</a>
+</html>

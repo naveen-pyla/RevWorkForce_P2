@@ -1,39 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'notifications')}">
 
 <head>
-    <title>Notifications</title>
+    <title>Message Center | RevWorkforce</title>
 </head>
 
 <body>
-    <h2>My Notifications</h2>
+    <div th:fragment="content">
+        <div class="mb-5 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1 font-bold">System Notifications</h2>
+                <p class="text-secondary mb-0">Stay updated with the latest alerts, approvals, and system messages.</p>
+            </div>
+            <div class="stat-icon bg-blue-light text-primary shadow-sm" style="width: 50px; height: 50px;">
+                <i class="fas fa-bell"></i>
+            </div>
+        </div>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Message</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="n : ${notifications}"
-                th:style="${!n.read ? 'font-weight:bold; background-color:#f0f8ff;' : ''}">
-                <td th:text="${n.message}"></td>
-                <td th:text="${n.createdAt}"></td>
-                <td th:text="${n.read ? 'Read' : 'Unread'}"></td>
-                <td>
-                    <a th:if="${!n.read}" th:href="@{/notifications/read/{id}(id=${n.notificationId})}">Mark as Read</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(notifications)}">
-                <td colspan="4" style="text-align: center;">No notifications</td>
-            </tr>
-        </tbody>
-    </table>
-    <br><br>
-    <a th:href="@{/dashboard}">Back to Dashboard</a>
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-0">
+                <div th:if="${not #lists.isEmpty(notifications)}" class="list-group list-group-flush">
+                    <div th:each="n : ${notifications}" class="list-group-item p-4 border-bottom-light transition-hover"
+                        th:classappend="${!n.read ? 'bg-alice-blue border-start border-4 border-primary' : ''}">
+
+                        <div class="d-flex align-items-start gap-4">
+                            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center border-light-dark"
+                                style="width: 48px; height: 48px; min-width: 48px; font-size: 1.15rem;">
+                                <i class="fas text-primary"
+                                    th:classappend="${!n.read ? 'fa-envelope-open-text' : 'fa-envelope'}"></i>
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-xs font-bold text-uppercase text-secondary tracking-widest"
+                                        th:text="${n.read ? 'ARCHIVED MESSAGE' : 'ACTION REQUIRED'}">NEW MESSAGE</span>
+                                    <span class="text-xs text-secondary opacity-75 d-flex align-items-center">
+                                        <i class="far fa-clock me-1"></i> <span
+                                            th:text="${#temporals.format(n.createdAt, 'MMM dd, HH:mm')}">Oct 20, 10:30
+                                            AM</span>
+                                    </span>
+                                </div>
+                                <h6 class="mb-2 font-bold text-dark" th:text="${n.message}"
+                                    th:style="${!n.read ? 'font-weight: 700;' : 'font-weight: 500; opacity: 0.8;'}">
+                                    Your leave request for Oct 24th has been approved by the manager.
+                                </h6>
+
+                                <div class="d-flex align-items-center justify-content-between mt-3">
+                                    <span th:if="${!n.read}"
+                                        class="badge bg-primary-subtle text-primary px-3 py-1 rounded-pill text-xs font-bold">
+                                        <i class="fas fa-circle me-1"
+                                            style="font-size: 0.5rem; vertical-align: middle;"></i> UNREAD
+                                    </span>
+                                    <span th:if="${n.read}"
+                                        class="text-xs text-success-emphasis d-flex align-items-center font-bold">
+                                        <i class="fas fa-check-double me-1 text-success"></i> ACKNOWLEDGED
+                                    </span>
+
+                                    <a th:if="${!n.read}" th:href="@{/notifications/read/{id}(id=${n.notificationId})}"
+                                        class="btn btn-xs btn-outline-primary rounded-pill px-4 py-2 font-bold transition-all hover-bg-primary">
+                                        Mark as Seen <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${#lists.isEmpty(notifications)}" class="text-center py-5 bg-white">
+                    <div class="mb-4 opacity-10">
+                        <i class="fas fa-smile-beam" style="font-size: 5rem;"></i>
+                    </div>
+                    <h5 class="font-bold text-dark mb-2">Workspace Inbox Clear</h5>
+                    <p class="text-secondary mb-0 mx-auto" style="max-width: 350px;">You are all caught up! No new
+                        notifications or system alerts at this time.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <a th:href="@{/dashboard}" class="btn btn-link text-secondary text-decoration-none text-sm fw-bold">
+                <i class="fas fa-long-arrow-alt-left me-1"></i> Return to Main Dashboard
+            </a>
+        </div>
+    </div>
 </body>
 
 </html>

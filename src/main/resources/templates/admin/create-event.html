@@ -1,31 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'events')}">
 
 <head>
-    <title>Create Event</title>
+    <title>Global Calendar Planner | Admin Portal</title>
 </head>
 
 <body>
-    <h2>Create New Event</h2>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header bg-dark py-5 text-center shadow-lg border-0">
+                        <div class="stat-icon bg-info text-white mx-auto mb-3 shadow"
+                            style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <h3 class="text-white fw-bold mb-0">Global Event Scheduling</h3>
+                        <p class="text-white-50 mb-0">Plan and publish company-wide events, workshops, and milestones.
+                        </p>
+                    </div>
 
-    <form th:action="@{/admin/events/save}" th:object="${event}" method="post">
-        <label>Event Title:</label>
-        <input type="text" th:field="*{title}" required />
-        <br><br>
+                    <div class="card-body p-5">
+                        <form th:action="@{/admin/events/save}" th:object="${event}" method="post">
+                            <div class="mb-4">
+                                <label
+                                    class="form-label font-bold text-xs text-uppercase text-secondary tracking-widest mb-3"><i
+                                        class="fas fa-magic me-1"></i> Event Identifier / Title</label>
+                                <div class="input-group shadow-sm">
+                                    <span class="input-group-text bg-white border-end-0 text-dark"><i
+                                            class="fas fa-star text-info"></i></span>
+                                    <input type="text" th:field="*{title}"
+                                        class="form-control border-start-0 py-3 font-bold text-dark bg-light-subtle"
+                                        placeholder="e.g. Annual Tech Symposium, Holiday Party..." required />
+                                </div>
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('title')}"
+                                    th:errors="*{title}"></div>
+                            </div>
 
-        <label>Description:</label>
-        <textarea th:field="*{description}" rows="4" cols="50"></textarea>
-        <br><br>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <label
+                                        class="form-label font-bold text-xs text-uppercase text-secondary tracking-widest mb-3"><i
+                                            class="fas fa-calendar-alt me-1"></i> Scheduled Date</label>
+                                    <div class="input-group shadow-sm">
+                                        <span class="input-group-text bg-white border-end-0 text-dark">📅</span>
+                                        <input type="date" th:field="*{eventDate}"
+                                            class="form-control border-start-0 py-3 font-bold text-dark bg-light-subtle"
+                                            required />
+                                    </div>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('eventDate')}"
+                                        th:errors="*{eventDate}"></div>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <div class="p-3 bg-light rounded-3 border-start border-4 border-info w-100">
+                                        <div class="text-xs font-bold text-info text-uppercase mb-1">PRO TIP</div>
+                                        <div class="text-xs text-info-emphasis">Events appear on all user dashboards to
+                                            drive participation.</div>
+                                    </div>
+                                </div>
+                            </div>
 
-        <label>Event Date:</label>
-        <input type="date" th:field="*{eventDate}" required />
-        <br><br>
+                            <div class="mb-5">
+                                <label
+                                    class="form-label font-bold text-xs text-uppercase text-secondary tracking-widest mb-3"><i
+                                        class="fas fa-align-left me-1"></i> Event Objective / Description</label>
+                                <textarea th:field="*{description}"
+                                    class="form-control shadow-sm p-4 bg-light-subtle text-dark" rows="5"
+                                    placeholder="Detail the agenda, venue, and purpose of this event..."></textarea>
+                                <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('description')}"
+                                    th:errors="*{description}"></div>
+                            </div>
 
-        <button type="submit">Save Event</button>
-    </form>
-
-    <br>
-    <a th:href="@{/admin/events}">Back to Events</a>
+                            <div class="d-grid gap-3 pt-3">
+                                <button type="submit" class="btn btn-dark btn-lg shadow py-3 font-bold text-uppercase">
+                                    <i class="fas fa-calendar-check me-2 text-info"></i> Sync to Organizational Calendar
+                                </button>
+                                <a th:href="@{/admin/events}"
+                                    class="btn btn-link text-secondary text-decoration-none text-center">Discard and
+                                    Back to Events Registry</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
