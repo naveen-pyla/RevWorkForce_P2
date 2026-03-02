@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
 
 import com.revworkforce.entity.Goal;
 import com.revworkforce.entity.LeaveApplication;
@@ -75,7 +77,12 @@ public class ManagerController {
     }
 
     @PostMapping("/apply-leave")
-    public String applyLeave(@ModelAttribute LeaveApplication leaveApplication, Authentication authentication) {
+    public String applyLeave(@Valid @ModelAttribute("leaveApplication") LeaveApplication leaveApplication,
+            BindingResult result, Authentication authentication, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("leaveTypes", leaveTypeRepository.findAll());
+            return "manager/apply-leave";
+        }
         String email = authentication.getName();
         managerService.applyLeave(leaveApplication, email);
         return "redirect:/manager/my-leaves";
@@ -104,8 +111,14 @@ public class ManagerController {
     }
 
     @PostMapping("/assign-goal")
-    public String assignGoal(@ModelAttribute Goal goal, @RequestParam("employeeId") Long employeeId,
-            Authentication authentication) {
+    public String assignGoal(@Valid @ModelAttribute("goal") Goal goal, BindingResult result,
+            @RequestParam("employeeId") Long employeeId, Authentication authentication, Model model) {
+        if (result.hasErrors()) {
+            String email = authentication.getName();
+            model.addAttribute("employees", managerService.getMyEmployees(email));
+            model.addAttribute("employeeId", employeeId); // for keeping selection if we want
+            return "manager/assign-goal";
+        }
         String email = authentication.getName();
         managerService.assignGoal(goal, employeeId, email);
         return "redirect:/manager/dashboard";
@@ -120,9 +133,15 @@ public class ManagerController {
     }
 
     @PostMapping("/write-review")
-    public String writeReview(@ModelAttribute PerformanceReview review, @RequestParam("employeeId") Long employeeId,
+    public String writeReview(@Valid @ModelAttribute("review") PerformanceReview review, BindingResult result,
+            @RequestParam("employeeId") Long employeeId,
             Authentication authentication, Model model) {
         String email = authentication.getName();
+        if (result.hasErrors()) {
+            model.addAttribute("employees", managerService.getMyEmployees(email));
+            model.addAttribute("employeeId", employeeId);
+            return "manager/write-review";
+        }
         try {
             managerService.createPerformanceReview(review, employeeId, email);
         } catch (RuntimeException e) {

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content, activeTab)">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">RevWorkforce</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome (for icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-rocket me-2"></i>
+                <span>RevWorkforce</span>
+            </div>
+
+            <nav>
+                <!-- Common Links -->
+                <a th:href="@{/dashboard}" class="nav-link"
+                    th:classappend="${activeTab == 'dashboard'} ? 'active' : ''">
+                    <i class="fas fa-home me-2"></i> Dashboard
+                </a>
+
+                <a th:href="@{/notifications}" class="nav-link"
+                    th:classappend="${activeTab == 'notifications'} ? 'active' : ''">
+                    <i class="fas fa-bell me-2"></i> Notifications
+                    <span th:if="${unreadCount > 0}" class="badge bg-danger ms-2" th:text="${unreadCount}">0</span>
+                </a>
+
+                <!-- Admin specific -->
+                <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <div class="ms-3 text-uppercase text-xs font-bold mt-4 mb-2 text-secondary">Admin Tools</div>
+                    <a th:href="@{/admin/employees}" class="nav-link"
+                        th:classappend="${activeTab == 'employees'} ? 'active' : ''">
+                        <i class="fas fa-users me-2"></i> Manage Employees
+                    </a>
+                    <a th:href="@{/admin/create-employee}" class="nav-link"
+                        th:classappend="${activeTab == 'add-employee'} ? 'active' : ''">
+                        <i class="fas fa-user-plus me-2"></i> Add Employee
+                    </a>
+                    <a th:href="@{/admin/announcements}" class="nav-link"
+                        th:classappend="${activeTab == 'manage-announcements'} ? 'active' : ''">
+                        <i class="fas fa-bullhorn me-2"></i> Announcements
+                    </a>
+                    <a th:href="@{/admin/leave-requests}" class="nav-link"
+                        th:classappend="${activeTab == 'manage-leaves'} ? 'active' : ''">
+                        <i class="fas fa-calendar-check me-2"></i> Leave Requests
+                    </a>
+                    <a th:href="@{/admin/events}" class="nav-link"
+                        th:classappend="${activeTab == 'manage-events'} ? 'active' : ''">
+                        <i class="fas fa-calendar-alt me-2"></i> Company Events
+                    </a>
+                </div>
+
+                <!-- Manager specific -->
+                <div th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+                    <div class="ms-3 text-uppercase text-xs font-bold mt-4 mb-2 text-secondary">Manager Tools</div>
+                    <a th:href="@{/manager/leave-requests}" class="nav-link"
+                        th:classappend="${activeTab == 'manage-leaves'} ? 'active' : ''">
+                        <i class="fas fa-calendar-check me-2"></i> Team Leaves
+                    </a>
+                    <a th:href="@{/manager/assign-goal}" class="nav-link"
+                        th:classappend="${activeTab == 'assign-goal'} ? 'active' : ''">
+                        <i class="fas fa-bullseye me-2"></i> Assign Goals
+                    </a>
+                    <a th:href="@{/manager/write-review}" class="nav-link"
+                        th:classappend="${activeTab == 'write-review'} ? 'active' : ''">
+                        <i class="fas fa-edit me-2"></i> Performance Reviews
+                    </a>
+                </div>
+
+                <!-- Employee/General specific -->
+                <div class="ms-3 text-uppercase text-xs font-bold mt-4 mb-2 text-secondary">Self Service</div>
+                <a th:href="@{/employee/profile}" class="nav-link"
+                    th:classappend="${activeTab == 'profile'} ? 'active' : ''">
+                    <i class="fas fa-user-circle me-2"></i> My Profile
+                </a>
+                <a th:href="@{/employee/apply-leave}" class="nav-link"
+                    th:classappend="${activeTab == 'apply-leave'} ? 'active' : ''">
+                    <i class="fas fa-calendar-plus me-2"></i> Apply Leave
+                </a>
+                <a th:href="@{/employee/my-leaves}" class="nav-link"
+                    th:classappend="${activeTab == 'my-leaves'} ? 'active' : ''">
+                    <i class="fas fa-history me-2"></i> My Leave History
+                </a>
+                <a th:href="@{/employee/my-goals}" class="nav-link"
+                    th:classappend="${activeTab == 'my-goals'} ? 'active' : ''">
+                    <i class="fas fa-tasks me-2"></i> My Goals
+                </a>
+
+                <div class="mt-auto pt-5">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="nav-link text-danger border-0 bg-transparent w-100 text-start">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div th:replace="${content}"></div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

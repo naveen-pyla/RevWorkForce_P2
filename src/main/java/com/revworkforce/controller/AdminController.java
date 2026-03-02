@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 // unused import removed
@@ -42,8 +44,13 @@ public class AdminController {
     }
 
     @PostMapping("/create-employee")
-    public String createEmployee(@ModelAttribute CreateEmployeeRequest request) {
-
+    public String createEmployee(@Valid @ModelAttribute("employeeRequest") CreateEmployeeRequest request,
+            BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("departments", departmentRepository.findAll());
+            model.addAttribute("managers", employeeRepository.findAll());
+            return "admin/create-employee";
+        }
         adminService.createEmployee(request);
         return "redirect:/admin/dashboard";
     }

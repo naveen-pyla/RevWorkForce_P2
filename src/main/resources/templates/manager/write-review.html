@@ -12,28 +12,36 @@
 
     <form th:action="@{/manager/write-review}" th:object="${review}" method="post">
 
-        <label>Select Employee:</label>
-        <select name="employeeId" required>
-            <option value="" disabled selected>-- Select an Employee --</option>
-            <option th:each="emp : ${employees}" th:value="${emp.empId}"
-                th:text="${emp.firstName + ' ' + emp.lastName}">
-            </option>
-        </select>
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Select Employee:</label>
+            <select name="employeeId" class="form-select" required>
+                <option value="">-- Select an Employee --</option>
+                <option th:each="emp : ${employees}" th:value="${emp.empId}"
+                    th:text="${emp.firstName + ' ' + emp.lastName}" th:selected="${emp.empId == employeeId}">
+                </option>
+            </select>
+        </div>
 
-        <label>Year:</label>
-        <input type="number" th:field="*{year}" min="2000" max="2100" required />
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Review Year:</label>
+            <input type="number" class="form-control" th:field="*{year}" />
+            <div class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+        </div>
 
-        <label>Rating (1-5):</label>
-        <input type="number" th:field="*{rating}" min="1" max="5" required />
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Rating (1-5):</label>
+            <input type="number" class="form-control" th:field="*{rating}" />
+            <div class="text-danger" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+        </div>
 
-        <label>Comments:</label>
-        <textarea th:field="*{comments}" rows="4" cols="50" required></textarea>
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Manager Comments:</label>
+            <textarea class="form-control" th:field="*{comments}" rows="4"
+                placeholder="How was the employee's performance?"></textarea>
+            <div class="text-danger" th:if="${#fields.hasErrors('comments')}" th:errors="*{comments}"></div>
+        </div>
 
-        <button type="submit">Submit Review</button>
+        <button type="submit" class="btn btn-primary">Submit Performance Review</button>
     </form>
 
     <br>

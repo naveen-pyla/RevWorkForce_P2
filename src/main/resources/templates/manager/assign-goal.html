@@ -10,28 +10,35 @@
 
     <form th:action="@{/manager/assign-goal}" th:object="${goal}" method="post">
 
-        <label>Select Employee:</label>
-        <select name="employeeId" required>
-            <option value="" disabled selected>-- Select an Employee --</option>
-            <option th:each="emp : ${employees}" th:value="${emp.empId}"
-                th:text="${emp.firstName + ' ' + emp.lastName}">
-            </option>
-        </select>
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Select Employee:</label>
+            <select name="employeeId" class="form-select" required>
+                <option value="">-- Select an Employee --</option>
+                <option th:each="emp : ${employees}" th:value="${emp.empId}"
+                    th:text="${emp.firstName + ' ' + emp.lastName}" th:selected="${emp.empId == employeeId}">
+                </option>
+            </select>
+        </div>
 
-        <label>Title:</label>
-        <input type="text" th:field="*{title}" required />
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Title:</label>
+            <input type="text" class="form-control" th:field="*{title}" />
+            <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        </div>
 
-        <label>Description:</label>
-        <textarea th:field="*{description}" required></textarea>
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Description:</label>
+            <textarea class="form-control" th:field="*{description}" placeholder="Details about this goal"></textarea>
+            <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+        </div>
 
-        <label>Due Date:</label>
-        <input type="date" th:field="*{dueDate}" required />
-        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Due Date:</label>
+            <input type="date" class="form-control" th:field="*{dueDate}" />
+            <div class="text-danger" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}"></div>
+        </div>
 
-        <button type="submit">Assign Goal</button>
+        <button type="submit" class="btn btn-primary">Assign New Goal</button>
     </form>
 
     <br>

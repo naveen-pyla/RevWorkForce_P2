@@ -1,29 +1,33 @@
 <form th:action="@{/manager/apply-leave}" th:object="${leaveApplication}" method="post">
 
-    <label>Leave Type:</label>
-    <select th:field="*{leaveType}">
-        <option th:each="type : ${leaveTypes}" th:value="${type.leaveTypeId}" th:text="${type.leaveName}">
-        </option>
-    </select>
+    <div class="mb-3">
+        <label class="form-label">Leave Type:</label>
+        <select class="form-select" th:field="*{leaveType}">
+            <option th:each="type : ${leaveTypes}" th:value="${type.leaveTypeId}" th:text="${type.leaveName}">
+            </option>
+        </select>
+        <div class="text-danger" th:if="${#fields.hasErrors('leaveType')}" th:errors="*{leaveType}"></div>
+    </div>
 
-    <br><br>
+    <div class="mb-3">
+        <label class="form-label">Start Date:</label>
+        <input type="date" class="form-control" th:field="*{startDate}" />
+        <div class="text-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+    </div>
 
-    <label>Start Date:</label>
-    <input type="date" th:field="*{startDate}" required />
+    <div class="mb-3">
+        <label class="form-label">End Date:</label>
+        <input type="date" class="form-control" th:field="*{endDate}" />
+        <div class="text-danger" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
+    </div>
 
-    <br><br>
+    <div class="mb-3">
+        <label class="form-label">Reason:</label>
+        <textarea class="form-control" th:field="*{reason}" placeholder="Why do you need leave?"></textarea>
+        <div class="text-danger" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></div>
+    </div>
 
-    <label>End Date:</label>
-    <input type="date" th:field="*{endDate}" required />
-
-    <br><br>
-
-    <label>Reason:</label>
-    <textarea th:field="*{reason}" required></textarea>
-
-    <br><br>
-
-    <button type="submit">Apply</button>
+    <button type="submit" class="btn btn-primary">Submit Application</button>
 </form>
 
 <br><br>

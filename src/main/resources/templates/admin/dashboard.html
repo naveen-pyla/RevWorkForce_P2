@@ -1,61 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'dashboard')}">
 
 <head>
-    <title>Admin Dashboard</title>
+    <title>Dashboard | RevWorkforce Admin</title>
 </head>
 
 <body>
-    <h2>Welcome, Admin</h2>
+    <div th:fragment="content">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-6">
+                <h2 class="mb-0">Administrator Dashboard</h2>
+                <p class="text-secondary mb-0">Overview of company performance and management</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a th:href="@{/admin/create-employee}" class="btn btn-primary btn-lg shadow-sm">
+                    <i class="fas fa-plus me-2"></i> New Employee
+                </a>
+            </div>
+        </div>
 
-    <a th:href="@{/notifications}"
-        style="display:inline-block; margin: 10px 0; background: #e0f7fa; padding: 5px 10px; border-radius: 5px; text-decoration: none; color: #006064; font-weight: bold;">
-        🔔 Notifications (<span th:text="${unreadCount}"></span>)
-    </a>
+        <!-- Quick Stats Row -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card border-start border-primary border-4">
+                    <div class="stat-icon bg-primary text-white">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <div class="stat-label">Total Employees</div>
+                        <div class="stat-value">Manage All</div>
+                        <a th:href="@{/admin/employees}"
+                            class="text-xs text-primary font-bold text-decoration-none">VIEW ALL <i
+                                class="fas fa-arrow-right list-inline-item"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card border-start border-info border-4">
+                    <div class="stat-icon bg-info text-white">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div class="stat-label">Leave Requests</div>
+                        <div class="stat-value text-info">Ongoing</div>
+                        <a th:href="@{/admin/leave-requests}"
+                            class="text-xs text-info font-bold text-decoration-none">PENDING APPROVALS</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card border-start border-success border-4">
+                    <div class="stat-icon bg-success text-white">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div>
+                        <div class="stat-label">Notifications</div>
+                        <div class="stat-value text-success" th:text="${unreadCount}">0</div>
+                        <a th:href="@{/notifications}" class="text-xs text-success font-bold text-decoration-none">CHECK
+                            ALERTS</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="mt-4">
-        <a class="btn btn-info mb-2" th:href="@{/admin/profile}">
-            👤 My Profile
-        </a>
-        <br />
+        <div class="row">
+            <!-- Events Feed -->
+            <div class="col-lg-8">
+                <div class="card mb-4 min-vh-50">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 font-bold"><i class="fas fa-calendar-alt text-primary me-2"></i> Upcoming Events
+                        </h5>
+                        <a th:href="@{/admin/events}" class="btn btn-sm btn-outline-secondary">Manage Calendar</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Event Name</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="event : ${upcomingEvents}">
+                                    <td class="font-bold text-primary" th:text="${event.eventDate}"></td>
+                                    <td th:text="${event.title}"></td>
+                                    <td><span class="text-secondary text-sm" th:text="${event.description}"></span></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(upcomingEvents)}">
+                                    <td colspan="3" class="text-center py-5 text-secondary">
+                                        <i class="fas fa-calendar-times mb-3 fs-1 d-block opacity-25"></i>
+                                        No upcoming events scheduled at this time.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-        <a class="btn btn-primary mb-2" th:href="@{/admin/create-employee}">
-            Create Employee
-        </a>
+            <!-- Quick Actions -->
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <h5 class="mb-3 font-bold">Quick Management</h5>
+                    <div class="list-group list-group-flush">
+                        <a th:href="@{/admin/announcements}"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                            <span><i class="fas fa-bullhorn me-3 text-secondary"></i> Broadcast Announcement</span>
+                            <i class="fas fa-chevron-right text-muted text-xs"></i>
+                        </a>
+                        <a th:href="@{/admin/leave-requests}"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                            <span><i class="fas fa-user-clock me-3 text-secondary"></i> Review Team Leaves</span>
+                            <i class="fas fa-chevron-right text-muted text-xs"></i>
+                        </a>
+                        <a th:href="@{/admin/employees}"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                            <span><i class="fas fa-sitemap me-3 text-secondary"></i> Organization Chart</span>
+                            <i class="fas fa-chevron-right text-muted text-xs"></i>
+                        </a>
+                    </div>
+                </div>
 
-        <a class="btn btn-secondary mb-2" th:href="@{/admin/employees}">
-            View Employees
-        </a>
-
-        <a th:href="@{/admin/announcements}">
-            Manage Announcements
-        </a>
-
-        <a th:href="@{/admin/leave-requests}" class="btn btn-warning mb-2">
-            Manage Leave Requests
-        </a>
+                <div class="card bg-primary text-white text-center p-4">
+                    <i class="fas fa-shield-alt fs-1 mb-3 opacity-50"></i>
+                    <h5>Secure Zone</h5>
+                    <p class="text-white-50 text-sm">System accounts and logs are being monitored for security
+                        compliance.</p>
+                </div>
+            </div>
+        </div>
 
     </div>
-
-    <a th:href="@{/admin/events}" class="btn btn-secondary mb-2 mt-4" style="display:inline-block; margin-top:15px;">
-        Manage Events
-    </a>
-
-    <hr>
-    <h3>Upcoming Events</h3>
-    <ul th:if="${not #lists.isEmpty(upcomingEvents)}">
-        <li th:each="event : ${upcomingEvents}">
-            <strong th:text="${event.eventDate}"></strong> -
-            <span th:text="${event.title}"></span>
-            <em th:if="${event.description != null and !event.description.isEmpty()}"
-                th:text="'(' + ${event.description} + ')'"></em>
-        </li>
-    </ul>
-    <p th:if="${#lists.isEmpty(upcomingEvents)}">No upcoming events!</p>
-    <br>
-    <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit" class="btn btn-danger">Logout</button>
-    </form>
 </body>
 
 </html>

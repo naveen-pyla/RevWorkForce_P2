@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 // unused imports removed
 @Controller
@@ -41,13 +43,14 @@ public class EmployeeController {
     }
 
     @PostMapping("/apply-leave")
-    public String applyLeave(@ModelAttribute LeaveApplication leaveApplication,
-            Authentication authentication) {
-
+    public String applyLeave(@Valid @ModelAttribute("leaveApplication") LeaveApplication leaveApplication,
+            BindingResult result, Authentication authentication, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("leaveTypes", leaveTypeRepository.findAll());
+            return "employee/apply-leave";
+        }
         String email = authentication.getName();
-
         employeeService.applyLeave(leaveApplication, email);
-
         return "redirect:/employee/my-leaves";
     }
 

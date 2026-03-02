@@ -1,49 +1,123 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{fragments/layout :: layout(~{::head}, ~{::content}, 'add-employee')}">
 
 <head>
-    <title>Create Employee</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Register Employee | RevWorkforce</title>
 </head>
 
-<body class="container mt-5">
+<body>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card mb-4 border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-5">
+                            <div class="stat-icon bg-primary text-white mx-auto mb-3"
+                                style="width: 64px; height: 64px; font-size: 2rem;">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h2 class="font-bold">Register New Employee</h2>
+                            <p class="text-secondary">Fill in the details to create a new workforce account.</p>
+                        </div>
 
-    <h2>Create Employee</h2>
-
-    <form th:action="@{/admin/create-employee}" th:object="${employeeRequest}" method="post">
-
-        <input class="form-control mb-2" th:field="*{firstName}" placeholder="First Name" />
-        <input class="form-control mb-2" th:field="*{lastName}" placeholder="Last Name" />
-        <input class="form-control mb-2" th:field="*{email}" placeholder="Email" />
-
-        <select class="form-control mb-2" th:field="*{role}">
-            <option value="EMPLOYEE">Employee</option>
-            <option value="MANAGER">Manager</option>
-            <option value="ADMIN">Admin</option>
-        </select>
-
-        <select class="form-control mb-2" th:field="*{departmentId}">
-            <option th:each="d : ${departments}" th:value="${d.departmentId}" th:text="${d.departmentName}">
-            </option>
-        </select>
-
-        <input class="form-control mb-2" th:field="*{designation}" placeholder="Designation" />
-        <input class="form-control mb-2" th:field="*{salary}" placeholder="Salary" />
-        <input class="form-control mb-2" th:field="*{phone}" placeholder="Phone" />
-        <input class="form-control mb-2" th:field="*{address}" placeholder="Address" />
-        <input type="date" class="form-control mb-2" th:field="*{joiningDate}" />
-
-        <select class="form-control mb-3" th:field="*{managerId}">
-            <option value="">Select Manager</option>
-            <option th:each="m : ${managers}" th:value="${m.empId}" th:text="${m.firstName}">
-            </option>
-        </select>
-
-        <button class="btn btn-primary">Create</button>
-
-    </form>
-    <br><br>
-    <a class="btn btn-secondary mt-3" th:href="@{/admin/dashboard}">Back to Dashboard</a>
+                        <form th:action="@{/admin/create-employee}" th:object="${employeeRequest}" method="post">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">First Name</label>
+                                    <input type="text" class="form-control" th:field="*{firstName}"
+                                        placeholder="First Name" />
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('firstName')}"
+                                        th:errors="*{firstName}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Last Name</label>
+                                    <input type="text" class="form-control" th:field="*{lastName}"
+                                        placeholder="Last Name" />
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('lastName')}"
+                                        th:errors="*{lastName}"></div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label font-bold text-sm">Email Address</label>
+                                    <input type="email" class="form-control" th:field="*{email}" placeholder="Email" />
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('email')}"
+                                        th:errors="*{email}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Account Role</label>
+                                    <select class="form-select" th:field="*{role}">
+                                        <option value="">Select Role</option>
+                                        <option value="EMPLOYEE">Employee</option>
+                                        <option value="MANAGER">Manager</option>
+                                        <option value="ADMIN">Admin</option>
+                                    </select>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('role')}"
+                                        th:errors="*{role}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Department</label>
+                                    <select class="form-select" th:field="*{departmentId}">
+                                        <option value="">Select Department</option>
+                                        <option th:each="d : ${departments}" th:value="${d.departmentId}"
+                                            th:text="${d.departmentName}"></option>
+                                    </select>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('departmentId')}"
+                                        th:errors="*{departmentId}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Designation</label>
+                                    <input type="text" class="form-control" th:field="*{designation}"
+                                        placeholder="Designation" />
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('designation')}"
+                                        th:errors="*{designation}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Salary</label>
+                                    <input type="number" step="0.01" class="form-control" th:field="*{salary}"
+                                        placeholder="Salary" />
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('salary')}"
+                                        th:errors="*{salary}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Phone Number</label>
+                                    <input type="text" class="form-control" th:field="*{phone}"
+                                        placeholder="Phone (10 digits)" />
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('phone')}"
+                                        th:errors="*{phone}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-bold text-sm">Joining Date</label>
+                                    <input type="date" class="form-control" th:field="*{joiningDate}" />
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('joiningDate')}"
+                                        th:errors="*{joiningDate}"></div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label font-bold text-sm">Residential Address</label>
+                                    <textarea class="form-control" th:field="*{address}" rows="2"
+                                        placeholder="Address"></textarea>
+                                    <div class="text-danger text-xs mt-1" th:if="${#fields.hasErrors('address')}"
+                                        th:errors="*{address}"></div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label font-bold text-sm">Assign Manager (Optional)</label>
+                                    <select class="form-select" th:field="*{managerId}">
+                                        <option value="">Select Manager</option>
+                                        <option th:each="m : ${managers}" th:value="${m.empId}"
+                                            th:text="${m.firstName + ' ' + m.lastName}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm py-3 font-bold">
+                                        <i class="fas fa-check-circle me-2"></i> Confirm Registration
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

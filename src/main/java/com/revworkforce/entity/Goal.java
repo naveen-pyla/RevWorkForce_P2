@@ -1,6 +1,7 @@
 package com.revworkforce.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,12 +23,16 @@ public class Goal {
     @JoinColumn(name = "emp_id", nullable = false)
     private Employee employee;
 
+    @NotBlank(message = "Goal title is required")
     @Column(nullable = false)
     private String title;
 
+    @NotBlank(message = "Description is required")
     @Column(length = 1000)
     private String description;
 
+    @NotNull(message = "Due date is required")
+    @FutureOrPresent(message = "Due date cannot be in the past")
     private LocalDate dueDate;
 
     private LocalDateTime assignedAt;
