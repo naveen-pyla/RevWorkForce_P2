@@ -4,6 +4,7 @@ import com.revworkforce.dto.CreateEmployeeRequest;
 import com.revworkforce.entity.*;
 import com.revworkforce.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminService {
 
         private final UserRepository userRepository;
@@ -28,6 +30,7 @@ public class AdminService {
 
         @Transactional
         public void createEmployee(CreateEmployeeRequest request) {
+                log.info("Admin initiating employee creation for email: {}", request.getEmail());
 
                 // 1️⃣ Create User
                 User user = User.builder()
@@ -83,14 +86,18 @@ public class AdminService {
                                 leaveBalanceRepository.save(lb);
                         });
                 }
+                log.info("Employee successfully created with ID: {} and User Email: {}", savedEmployee.getEmpId(),
+                                request.getEmail());
         }
 
         @Transactional
         public void deleteEmployee(Long empId) {
-                // Current implementation is hard delete.
-                // We could change it to soft delete if needed, but for now keeping as is.
+                log.warn("Admin initiating hard delete for employee ID: {}", empId);
                 Employee employee = employeeRepository.findById(empId)
-                                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                                .orElseThrow(() -> {
+                                        log.error("Failed to delete employee: ID {} not found", empId);
+                                        return new RuntimeException("Employee not found");
+                                });
                 leaveBalanceRepository.deleteByEmployee(employee);
                 leaveApplicationRepository.deleteByEmployee(employee);
                 goalRepository.deleteByEmployee(employee);
@@ -98,6 +105,7 @@ public class AdminService {
                 notificationRepository.deleteByUser(employee.getUser());
                 employeeRepository.delete(employee);
                 userRepository.delete(employee.getUser());
+                log.info("Successfully deleted employee ID: {} and associated user", empId);
         }
 
         @Transactional
@@ -115,6 +123,7 @@ public class AdminService {
 
                 employeeRepository.save(employee);
                 userRepository.save(employee.getUser());
+                log.info("Status for employee ID {} toggled to: {}", empId, employee.getStatus());
         }
 
         @Transactional
@@ -183,6 +192,8 @@ public class AdminService {
                 leave.setStatus("APPROVED");
                 leave.setApprovedBy(admin);
                 leaveApplicationRepository.save(leave);
+                log.info("Admin {} approved leave ID: {} for employee: {}", adminEmail, leaveId,
+                                leave.getEmployee().getFirstName());
 
                 Notification notification = Notification.builder()
                                 .user(leave.getEmployee().getUser())
@@ -211,6 +222,8 @@ public class AdminService {
                 leave.setApprovedBy(admin);
                 leave.setManagerComment(adminComment);
                 leaveApplicationRepository.save(leave);
+                log.info("Admin {} rejected leave ID: {} for employee: {}. Reason: {}", adminEmail, leaveId,
+                                leave.getEmployee().getFirstName(), adminComment);
 
                 Notification notification = Notification.builder()
                                 .user(leave.getEmployee().getUser())

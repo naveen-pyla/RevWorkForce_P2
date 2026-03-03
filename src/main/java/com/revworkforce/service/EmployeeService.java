@@ -15,6 +15,7 @@ import com.revworkforce.repository.UserRepository;
 import com.revworkforce.entity.PerformanceReview;
 import com.revworkforce.repository.PerformanceReviewRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmployeeService {
 
     private final UserRepository userRepository;
@@ -45,6 +47,7 @@ public class EmployeeService {
         leaveApplication.setAppliedOn(LocalDateTime.now());
 
         leaveApplicationRepository.save(leaveApplication);
+        log.info("Employee {} applied for leave. ID: {}", email, leaveApplication.getLeaveId());
 
         // Notify Manager
         Employee manager = employee.getManager();
@@ -106,6 +109,7 @@ public class EmployeeService {
 
         goal.setStatus("COMPLETED");
         goalRepository.save(goal);
+        log.info("Employee {} marked goal ID: {} as COMPLETED", email, goalId);
 
         if (employee.getManager() != null) {
             Notification notification = Notification.builder()
@@ -139,5 +143,6 @@ public class EmployeeService {
         employee.setPhone(phone);
         employee.setAddress(address);
         employeeRepository.save(employee);
+        log.info("Employee {} updated their profile contact information", email);
     }
 }

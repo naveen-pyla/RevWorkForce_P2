@@ -15,6 +15,7 @@ import com.revworkforce.entity.PerformanceReview;
 import com.revworkforce.repository.PerformanceReviewRepository;
 import com.revworkforce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerService {
 
         private final UserRepository userRepository;
@@ -80,6 +82,8 @@ public class ManagerService {
                 leave.setStatus("APPROVED");
                 leave.setApprovedBy(manager);
                 leaveApplicationRepository.save(leave);
+                log.info("Manager {} approved leave ID: {} for employee: {}", managerEmail, leaveId,
+                                leave.getEmployee().getFirstName());
 
                 Notification notification = Notification.builder()
                                 .user(leave.getEmployee().getUser())
@@ -108,6 +112,8 @@ public class ManagerService {
                 leave.setApprovedBy(manager);
                 leave.setManagerComment(managerComment);
                 leaveApplicationRepository.save(leave);
+                log.info("Manager {} rejected leave ID: {} for employee: {}. Comment: {}", managerEmail, leaveId,
+                                leave.getEmployee().getFirstName(), managerComment);
 
                 Notification notification = Notification.builder()
                                 .user(leave.getEmployee().getUser())
@@ -131,6 +137,7 @@ public class ManagerService {
                 leaveApplication.setAppliedOn(LocalDateTime.now());
 
                 leaveApplicationRepository.save(leaveApplication);
+                log.info("Manager/User {} applied for leave. ID: {}", email, leaveApplication.getLeaveId());
 
                 // Notify Manager/Admin
                 Employee manager = employee.getManager();
@@ -187,6 +194,7 @@ public class ManagerService {
                 goal.setStatus("ASSIGNED");
                 goal.setAssignedAt(LocalDateTime.now());
                 goalRepository.save(goal);
+                log.info("Manager {} assigned goal '{}' to employee ID: {}", managerEmail, goal.getTitle(), employeeId);
 
                 Notification notification = Notification.builder()
                                 .user(employee.getUser())
@@ -218,7 +226,11 @@ public class ManagerService {
 
                 try {
                         performanceReviewRepository.save(review);
+                        log.info("Manager {} submitted performance review for employee ID: {}, Year: {}", managerEmail,
+                                        employeeId, review.getYear());
                 } catch (Exception e) {
+                        log.error("Failed to save performance review for employee ID: {} by manager {}", employeeId,
+                                        managerEmail);
                         throw new RuntimeException("Review for this year already exists for this employee.");
                 }
 
