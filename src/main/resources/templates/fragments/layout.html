@@ -39,6 +39,20 @@
                         th:text="${unreadCount}">0</span>
                 </a>
 
+                <!-- Announcements per Role -->
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/announcements}" class="nav-link"
+                    th:classappend="${activeTab == 'announcements'} ? 'active' : ''">
+                    <i class="fas fa-bullhorn me-2"></i> Announcements
+                </a>
+                <a sec:authorize="hasRole('MANAGER')" th:href="@{/manager/announcements}" class="nav-link"
+                    th:classappend="${activeTab == 'announcements'} ? 'active' : ''">
+                    <i class="fas fa-bullhorn me-2"></i> Announcements
+                </a>
+                <a sec:authorize="hasRole('EMPLOYEE')" th:href="@{/employee/announcements}" class="nav-link"
+                    th:classappend="${activeTab == 'announcements'} ? 'active' : ''">
+                    <i class="fas fa-bullhorn me-2"></i> Announcements
+                </a>
+
                 <!-- Admin specific -->
                 <div sec:authorize="hasRole('ADMIN')">
                     <div class="ms-3 text-uppercase text-xs font-bold mt-4 mb-2 text-secondary">Admin Tools</div>
@@ -56,7 +70,7 @@
                     </a>
                     <a th:href="@{/admin/leave-requests}" class="nav-link"
                         th:classappend="${activeTab == 'manage-leaves'} ? 'active' : ''">
-                        <i class="fas fa-calendar-check me-2"></i> System Leave Approvals
+                        <i class="fas fa-calendar-check me-2"></i> Leave Approvals
                     </a>
                     <a th:href="@{/admin/events}" class="nav-link"
                         th:classappend="${activeTab == 'manage-events'} ? 'active' : ''">
@@ -98,19 +112,7 @@
                     <i class="fas fa-user-circle me-2"></i> My Profile
                 </a>
 
-                <!-- Announcements per Role -->
-                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/announcements}" class="nav-link"
-                    th:classappend="${activeTab == 'announcements'} ? 'active' : ''">
-                    <i class="fas fa-bullhorn me-2"></i> Announcements
-                </a>
-                <a sec:authorize="hasRole('MANAGER')" th:href="@{/manager/announcements}" class="nav-link"
-                    th:classappend="${activeTab == 'announcements'} ? 'active' : ''">
-                    <i class="fas fa-bullhorn me-2"></i> Announcements
-                </a>
-                <a sec:authorize="hasRole('EMPLOYEE')" th:href="@{/employee/announcements}" class="nav-link"
-                    th:classappend="${activeTab == 'announcements'} ? 'active' : ''">
-                    <i class="fas fa-bullhorn me-2"></i> Announcements
-                </a>
+
 
                 <!-- Leave & Goals restricted to non-Admins (Employees and Managers) -->
                 <div sec:authorize="hasAnyRole('EMPLOYEE', 'MANAGER')">
