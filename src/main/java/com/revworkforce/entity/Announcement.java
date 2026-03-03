@@ -26,7 +26,7 @@ public class Announcement {
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
-    private Employee createdBy;  // Admin employee
+    private Employee createdBy; // Admin employee
 
     private LocalDateTime createdAt;
 }

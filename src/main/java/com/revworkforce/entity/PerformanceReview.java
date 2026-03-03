@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PerformanceReview {
+public class PerformanceReview extends AbstractAuditEntity {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

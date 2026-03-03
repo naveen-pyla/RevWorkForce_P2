@@ -64,9 +64,13 @@ public class AdminController {
 
     @GetMapping("/delete/{id}")
     public String deleteEmployee(@PathVariable("id") Long id) {
-
         adminService.deleteEmployee(id);
+        return "redirect:/admin/employees";
+    }
 
+    @GetMapping("/toggle-status/{id}")
+    public String toggleEmployeeStatus(@PathVariable("id") Long id) {
+        adminService.toggleStatus(id);
         return "redirect:/admin/employees";
     }
 

@@ -138,6 +138,15 @@
                                     Dashboard</a>
                             </div>
                         </form>
+                        <div class="mt-4 pt-3 border-top text-xs text-muted">
+                            <i class="fas fa-info-circle me-1"></i> System Registration:
+                            <span th:text="${#temporals.format(employee.createdDate, 'dd MMM yyyy HH:mm')}"></span>
+                            <span th:if="${employee.lastModifiedDate != null}" class="ms-3">
+                                <i class="fas fa-history me-1"></i> Last System Update:
+                                <span
+                                    th:text="${#temporals.format(employee.lastModifiedDate, 'dd MMM yyyy HH:mm')}"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

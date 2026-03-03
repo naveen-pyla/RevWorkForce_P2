@@ -38,7 +38,6 @@ public class CreateEmployeeRequest {
     private String address;
 
     @NotNull(message = "Joining date is required")
-    @PastOrPresent(message = "Joining date cannot be in the future")
     private LocalDate joiningDate;
 
     private Long managerId; // nullable

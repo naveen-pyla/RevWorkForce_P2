@@ -30,6 +30,8 @@
                             <th>Role & Designation</th>
                             <th>Department</th>
                             <th>Reporting Manager</th>
+                            <th>Joining Date</th>
+                            <th>Status</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -63,8 +65,30 @@
                                 <span th:if="${emp.manager == null}" class="text-xs text-muted">No Manager
                                     Assigned</span>
                             </td>
+                            <td class="text-xs text-secondary">
+                                <span class="font-bold text-dark d-block text-sm"
+                                    th:text="${#temporals.format(emp.joiningDate, 'dd MMM yyyy')}"></span>
+                                <span class="badge bg-light text-secondary border px-1"
+                                    th:if="${emp.joiningDate.isAfter(T(java.time.LocalDate).now())}">FUTURE START</span>
+                            </td>
+                            <td>
+                                <span th:if="${emp.status == 'ACTIVE'}"
+                                    class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                    <i class="fas fa-check-circle me-1"></i> ACTIVE
+                                </span>
+                                <span th:if="${emp.status == 'INACTIVE'}"
+                                    class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                                    <i class="fas fa-times-circle me-1"></i> INACTIVE
+                                </span>
+                            </td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
+                                    <a th:href="@{/admin/toggle-status/{id}(id=${emp.empId})}" class="btn btn-sm"
+                                        th:classappend="${emp.status == 'ACTIVE' ? 'btn-outline-warning' : 'btn-outline-success'}"
+                                        th:title="${emp.status == 'ACTIVE' ? 'Deactivate' : 'Activate'}">
+                                        <i class="fas"
+                                            th:classappend="${emp.status == 'ACTIVE' ? 'fa-user-slash' : 'fa-user-check'}"></i>
+                                    </a>
                                     <a th:href="@{/admin/manager/{id}(id=${emp.empId})}"
                                         class="btn btn-sm btn-outline-info" title="Assign Manager">
                                         <i class="fas fa-sitemap"></i>

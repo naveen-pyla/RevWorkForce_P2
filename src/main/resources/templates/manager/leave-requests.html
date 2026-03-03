@@ -53,6 +53,10 @@
                                         <div class="font-bold" th:text="${leave.startDate}">2023-10-01</div>
                                         <div class="text-secondary text-xs" th:text="${'to ' + leave.endDate}">
                                             2023-10-05</div>
+                                        <div class="text-xs text-muted mt-1">
+                                            Applied: <span
+                                                th:text="${#temporals.format(leave.createdDate, 'dd MMM yyyy')}"></span>
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
